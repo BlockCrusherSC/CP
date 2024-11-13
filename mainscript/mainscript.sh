@@ -255,8 +255,12 @@ then
 elif [[ $ftpstatus == "no" || $ftpstatus == "n" ]];
 then
 	apt-get purge -y -qq vsftpd proftpd >> $LOG_FILE
-	ufw deny 20 >> $LOG_FILE
-	ufw deny 21 >> $LOG_FILE
+	ufw deny ftp >> $LOG_FILE
+	ufw deny sftp >> $LOG_FILE
+ 	ufw deny saft >> $LOG_FILE
+  	ufw deny sftps >> $LOG_FILE
+   	ufw deny sftps-data >> $LOG_FILE
+    	printlog "FTP (vsftpd and proftpd) have been removed, and ufw has been configured."
 else
 	printlog "Invalid response given. FTPStatus has not been configured."
 fi
@@ -398,6 +402,16 @@ mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 printlog "Script Complete."
 
 echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a $MANUAL_FILE
+#function manualtask() {
+#echo -e "${GREEN}$1\n${RESET}" | sudo tee -a $MANUAL_FILE
+#}
+#manualtask "Configure users"
+#manualtask "Configure groups"
+#manualtask "Configure Firefox"
+#manualtask "Modify user privileges"
+#manualtask "Configure Apparmor"
+#manualtask "Check for suspicious activities"
+#anualtask "Configure cron/Task scheduler"
 echo -e "${GREEN}Configure users\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure groups\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure Firefox\n${RESET}" | sudo tee -a $MANUAL_FILE
