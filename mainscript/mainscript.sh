@@ -25,7 +25,7 @@ chmod 777 "$LOG_FILE"
 > "$LOG_FILE"
 printlog "Script Started."
 #Ensure importfiles folder is installed
-echo -e "${RED}Is importfiles installed and taken out of downloads, and apt-get update has been run?${RESET}"
+echo -e "${RED}UPDATE AND UPGRADE FIRST!!! Is importfiles installed and taken out of downloads, and apt-get update has been run?${RESET}"
 read importfiles
 if [[ $importfiles == "yes" || $importfiles == "y" ]];
 then
@@ -92,24 +92,24 @@ chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
 printlog "For sysctl.conf: ___________________"
 
-#Secure LightDM!!!!!!!!!!!!!!!!!!!!!!!!
+#Secure LightDM!!!!!!!!!!
 #Need to add another in case GNOME is installed
-cp /etc/lightdm.conf $BACKUPDIR/lightdm.conf
+cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
 chmod 777 $BACKUPDIR/lightdm.conf
 printlog "lightdm.conf backed up."
-cp importfiles/lightdm.conf /etc/lightdm.conf
-chmod 600 /etc/lightdm.conf
+cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
+chmod 600 /etc/lightdm/lightdm.conf
 printlog "lightdm.conf permissions configured."
 
-#Set UID 0 to root!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#Set UID 0 to root!!!!!!!!!
 rootuid=(id -u root)
-if [ $rootuid -eq 0 ];
+if [[ $rootuid == 0 ]];
 then
 	printlog "Root UID is already 0. No changes needed."
 else
 	printlog "Root UID is not 0. Fixing..."
 	sed -i 's/^root:x:1:0:/root:x:0:0:/' /etc/passwd
-	find / -user "$rootuid" -exec chown root {} \;
+#	find / -user "$rootuid" -exec chown root {} \;
 	printlog "UID for root set to 0 and ownership of files has been fixed."
 fi
 
@@ -247,18 +247,19 @@ else
 fi
 
     #FTP
-#echo "Does this computer need FTP?"
-#read ftpstatus
-#if [[ $ftpstatus == "yes" || $ftpstatus == "y" ]];
-#then
-#elif [[ $ftpstatus == "no" || $ftpstatus == "n"]];
-#then
-#   systemctl stop vsftpd >> $LOG_FILE
-#   systemctl stop proftpd >> $LOG_FILE
-#    apt-get purge -y -qq vsftpd proftpd >> $LOG_FILE
-#else
-#printlog "Invalid response given. FTPStatus has not been configured."
-#fi
+echo "Does this computer need FTP?"
+read ftpstatus
+if [[ $ftpstatus == "yes" || $ftpstatus == "y" ]];
+then
+	echo "..."
+elif [[ $ftpstatus == "no" || $ftpstatus == "n" ]];
+then
+	apt-get purge -y -qq vsftpd proftpd >> $LOG_FILE
+	ufw deny 20 >> $LOG_FILE
+	ufw deny 21 >> $LOG_FILE
+else
+	printlog "Invalid response given. FTPStatus has not been configured."
+fi
 
     #Telnet
 echo "Does this computer need Telnet?"
@@ -383,6 +384,11 @@ apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
+#Files with perms of 700-777
+echo -e "All files with a permission of 700-777:" | sudo tee -a $MANUAL_FILE
+ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
+
 printlog "Script Complete."
 
-echo -e "${CYAN}Please complete the following manually:\n${GREEN}Configure users\nConfigure groups\nModify user privileges\nConfigure Apparmor\nConfigure cron/task scheduler\n${RESET}" | sudo tee -a $LOG_FILE
+echo -e "${CYAN}Please complete the following manually:\n${GREEN}Configure users\nConfigure groups\nModify user privileges\nConfigure Apparmor\nCheck for suspicious services (netstat -anp | grep LISTEN | grep -v STREAM)\nConfigure cron/task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e
