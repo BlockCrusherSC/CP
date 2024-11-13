@@ -179,7 +179,7 @@ touch /etc/cron.deny
 chmod 600 /etc/cron.allow >> $LOG_FILE
 chmod 600 /etc/cron.deny >> $LOG_FILE
 chmod 700 /var/spool/cron/crontabs >> $LOG_FILE
-printlog "Cron directories limited & created if they didn't exist. Check scheduled tasks manually."
+printlog "Cron directories limited & created if they didn't exist."
 
 #Remove startup tasks from crontab
 #!!!!
@@ -385,10 +385,23 @@ apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
 #Files with perms of 700-777
-echo -e "All files with a permission of 700-777:" | sudo tee -a $MANUAL_FILE
+echo -e "Check files with a permission of 700-777:" | sudo tee -a $MANUAL_FILE
 ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
+
+#Strange admins
+echo -e "Check for strange administrators:" | sudo tee -a $MANUAL_FILE
+mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
+#Strange users
+echo -e "Check for strange users:" | sudo tee -a $MANUAL_FILE
+mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 printlog "Script Complete."
 
-echo -e "${CYAN}Please complete the following manually:\n${GREEN}Configure users\nConfigure groups\nModify user privileges\nConfigure Apparmor\nCheck for suspicious services (netstat -anp | grep LISTEN | grep -v STREAM)\nConfigure cron/task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e
+echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Configure users\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Configure groups\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Configure Firefox\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Modify user privileges${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Configure Apparmor\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Check for suspicious services (netstat -anp | grep LISTEN | grep -v STREAM))\n${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Configure cron/Task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
