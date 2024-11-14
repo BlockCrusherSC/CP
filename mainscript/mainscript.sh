@@ -121,7 +121,9 @@ fi
 printlog "Does this computer use GNOME?"
 read gnome
 if [[ $gnome == yes || $gnome == y ]];
-	echo "..."
+	echo -e "${GREEN}In Settings > Sharing, turn off any screen sharing or remote login options\n${RESET}" | sudo tee -a $MANUAL_FILE 
+	echo -e "${GREEN}Go to Settings > Privacy > Screen Lock and ensure it’s enabled${RESET}" | sudo tee -a $MANUAL_FILE
+ 	echo "..."
 	printlog "GNOME configured."
 fi
 
@@ -423,7 +425,7 @@ echo -e "${GREEN}Check for strange administrators:${RESET}" | sudo tee -a $MANUA
 mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
 #Strange users
 echo -e "${GREEN}Check for strange users:${RESET}" | sudo tee -a $MANUAL_FILE
-mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
+mawk -F: '$3 < 1000 || $3 > 65534 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 #Check crontab for startups
 echo -e "${GREEN}Listening processes:${RESET} >> $MANUAL_FILE
@@ -442,11 +444,10 @@ echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a
 #manualtask "Modify user privileges"
 #manualtask "Configure Apparmor"
 #manualtask "Check for suspicious activities"
-#anualtask "Configure cron/Task scheduler"
+#manualtask "Configure cron/Task scheduler"
 echo -e "${GREEN}Configure users\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure groups\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure Firefox\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Modify user privileges${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure Apparmor\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Check for suspicious services (netstat -anp | grep LISTEN | grep -v STREAM))\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure cron/Task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
