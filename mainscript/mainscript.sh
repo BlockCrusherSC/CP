@@ -130,8 +130,8 @@ then
 	printlog "GNOME configured."
 fi
 
-#Set UID 0 to root!!!!!!!!!
-rootuid=(id -u root)
+#Set UID 0 to root
+$rootuid=(id -u root)
 if [[ $rootuid == 0 ]];
 then
 	printlog "Root UID is already 0. No changes needed."
@@ -145,7 +145,6 @@ fi
 #Lock Root Account
 passwd -l root >> $LOG_FILE
 printlog "Root account locked."
-
 #Unalias accounts
 unalias -a
 printlog "All alias have been removed."
