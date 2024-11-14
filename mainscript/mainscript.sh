@@ -22,6 +22,7 @@ function printlog() {
 }
 touch actions.log
 chmod 777 "$LOG_FILE"
+chmod 777 "$MANUAL_FILE"
 > "$LOG_FILE"
 printlog "Script Started."
 #Ensure importfiles folder is installed
@@ -68,7 +69,18 @@ printlog "login.defs backed up."
 sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS   90/' /etc/login.defs
 sed -i 's/^PASS_MIN_DAYS.*/PASS_MIN_DAYS   10/' /etc/login.defs
 sed -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE   7/' /etc/login.defs
+
+    #common-auth
+cp /etc/pam.d/common-auth $BACKUPDIR/common-auth
+chmod 777 $BACKUPDIR/common-auth
+printlog "common-auth backed up."
+sed -i 's/*pam.unix.so nullok*/pam.unix.so/' /etc/pam.d/common-auth
 printlog "Password policies configured."
+
+#Account lockout policy
+touch /usr/share/pam-configs/faillock >> $LOG_FILE
+touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
+
 
 #Enable Firewall
 printlog "Enabling firewall..."
@@ -90,16 +102,16 @@ printlog "sysctl.conf backed up."
 cp importfiles/sysctl.conf /etc/sysctl.conf
 chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
-printlog "For sysctl.conf: ___________________"
+printlog "sysctl.conf configured."
 
 #Secure LightDM!!!!!!!!!!
 #Need to add another in case GNOME is installed
-cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
-chmod 777 $BACKUPDIR/lightdm.conf
-printlog "lightdm.conf backed up."
-cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
-chmod 600 /etc/lightdm/lightdm.conf
-printlog "lightdm.conf permissions configured."
+#cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
+#chmod 777 $BACKUPDIR/lightdm.conf
+#printlog "lightdm.conf backed up."
+#cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
+#chmod 600 /etc/lightdm/lightdm.conf
+#printlog "lightdm.conf permissions configured."
 
 #Set UID 0 to root!!!!!!!!!
 rootuid=(id -u root)
@@ -166,6 +178,8 @@ appremoval socat
 appremoval sock
 appremoval socket
 appremoval sbd
+apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
+printlog "Common games removed."
 
 #apt-get purge apache2 lighttpd nikto nginx nmap tcpdump wireshark zenmap logkeys snmpd inetutils-inetd john john-data hydra hydra-gtk aircrack-ng fcrackzip lcrack ophcrack ophcrack-cli pdfcrack pyrit rarcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist burpsuite netcat netcat-openbsd netcat-traditional ncat pnetcat socat sock socket sbd -y -qq >> $LOG_FILE
 echo "Applications with hack or crack in the name (remove these):" | sudo tee -a $MANUAL_FILE
