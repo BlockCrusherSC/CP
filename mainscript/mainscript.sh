@@ -70,7 +70,7 @@ sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS   90/' /etc/login.defs
 sed -i 's/^PASS_MIN_DAYS.*/PASS_MIN_DAYS   10/' /etc/login.defs
 sed -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE   7/' /etc/login.defs
 
-    #common-auth
+    #No null passwords/common-auth
 cp /etc/pam.d/common-auth $BACKUPDIR/common-auth
 chmod 777 $BACKUPDIR/common-auth
 printlog "common-auth backed up."
@@ -79,8 +79,10 @@ printlog "Password policies configured."
 
 #Account lockout policy
 touch /usr/share/pam-configs/faillock >> $LOG_FILE
+echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n		[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
-
+echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n		requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
+echo -e "run sudo pam-auth update, then toggle Notify on failed login attempts and Enforce failed login attempt counter." | sudo tee -a $MANUAL_LOG
 
 #Enable Firewall
 printlog "Enabling firewall..."
@@ -104,14 +106,24 @@ chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
 printlog "sysctl.conf configured."
 
-#Secure LightDM!!!!!!!!!!
+#Graphics software configuration
+printlog "Does the computer use LightDM?"
+read lightdm
+if [[ $lightdm == yes || $lightdm == y ]];
 #Need to add another in case GNOME is installed
-#cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
-#chmod 777 $BACKUPDIR/lightdm.conf
-#printlog "lightdm.conf backed up."
-#cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
-#chmod 600 /etc/lightdm/lightdm.conf
-#printlog "lightdm.conf permissions configured."
+	cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
+	chmod 777 $BACKUPDIR/lightdm.conf
+	printlog "lightdm.conf backed up."
+	cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
+	chmod 600 /etc/lightdm/lightdm.conf
+	printlog "lightdm.conf permissions configured."
+fi
+printlog "Does this computer use GNOME?"
+read gnome
+if [[ $gnome == yes || $gnome == y ]];
+	echo "..."
+	printlog "GNOME configured."
+fi
 
 #Set UID 0 to root!!!!!!!!!
 rootuid=(id -u root)
@@ -378,7 +390,7 @@ fi
     #Web Server
 #echo "Is this computer a Web Server?"
 
-echo "Can users have media files?"
+echo "Can users have media files? (COULD BREAK STUFF)"
 read mediastatus
 if [[ $mediastatus == "no" || $mediastatus == "n" ]];
 then
@@ -403,15 +415,20 @@ apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
 #Files with perms of 700-777
-echo -e "Check files with a permission of 700-777:" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Check files with a permission of 700-777:${RESET}" | sudo tee -a $MANUAL_FILE
 ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
 
 #Strange admins
-echo -e "Check for strange administrators:" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Check for strange administrators:${RESET}" | sudo tee -a $MANUAL_FILE
 mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
 #Strange users
-echo -e "Check for strange users:" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Check for strange users:${RESET}" | sudo tee -a $MANUAL_FILE
 mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
+
+#Check crontab for startups
+echo -e "${GREEN}Listening processes:${RESET} >> $MANUAL_FILE
+-ss tlnp >> $MANUAL_FILE
+echo -e "run ${GREEN}sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE)${RESET}" >> $MANUAL_FILE
 
 printlog "Script Complete."
 
