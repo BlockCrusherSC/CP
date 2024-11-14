@@ -24,6 +24,7 @@ touch actions.log
 chmod 777 "$LOG_FILE"
 chmod 777 "$MANUAL_FILE"
 > "$LOG_FILE"
+> "$MANUAL_FILE"
 printlog "Script Started."
 #Ensure importfiles folder is installed
 echo -e "${RED}UPDATE AND UPGRADE FIRST!!! Is importfiles installed and taken out of downloads, and apt-get update has been run?${RESET}"
@@ -79,9 +80,9 @@ printlog "Password policies configured."
 
 #Account lockout policy
 touch /usr/share/pam-configs/faillock >> $LOG_FILE
-echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n		[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
+echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n	[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
-echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n		requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
+echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
 echo -e "run sudo pam-auth update, then toggle Notify on failed login attempts and Enforce failed login attempt counter." | sudo tee -a $MANUAL_LOG
 
 #Enable Firewall
@@ -111,6 +112,7 @@ printlog "Does the computer use LightDM?"
 read lightdm
 if [[ $lightdm == yes || $lightdm == y ]];
 #Need to add another in case GNOME is installed
+then
 	cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
 	chmod 777 $BACKUPDIR/lightdm.conf
 	printlog "lightdm.conf backed up."
@@ -121,6 +123,7 @@ fi
 printlog "Does this computer use GNOME?"
 read gnome
 if [[ $gnome == yes || $gnome == y ]];
+then
 	echo -e "${GREEN}In Settings > Sharing, turn off any screen sharing or remote login options\n${RESET}" | sudo tee -a $MANUAL_FILE 
 	echo -e "${GREEN}Go to Settings > Privacy > Screen Lock and ensure it’s enabled${RESET}" | sudo tee -a $MANUAL_FILE
  	echo "..."
@@ -196,7 +199,7 @@ apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_F
 printlog "Common games removed."
 
 #apt-get purge apache2 lighttpd nikto nginx nmap tcpdump wireshark zenmap logkeys snmpd inetutils-inetd john john-data hydra hydra-gtk aircrack-ng fcrackzip lcrack ophcrack ophcrack-cli pdfcrack pyrit rarcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist burpsuite netcat netcat-openbsd netcat-traditional ncat pnetcat socat sock socket sbd -y -qq >> $LOG_FILE
-echo "Applications with hack or crack in the name (remove these):" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Applications with hack or crack in the name (remove these):${RESET}" | sudo tee -a $MANUAL_FILE
 dpkg -l | grep -E 'hack|crack' >> $MANUAL_FILE
 printlog "Common hacking tools removed, and apps with hack or crack have been scanned for."
 #DELETE NETCAT BACKDOOR PROCESS
@@ -428,9 +431,9 @@ echo -e "${GREEN}Check for strange users:${RESET}" | sudo tee -a $MANUAL_FILE
 mawk -F: '$3 < 1000 || $3 > 65534 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 #Check crontab for startups
-echo -e "${GREEN}Listening processes:${RESET} >> $MANUAL_FILE
--ss tlnp >> $MANUAL_FILE
-echo -e "run ${GREEN}sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE)${RESET}" >> $MANUAL_FILE
+echo -e "${GREEN}Listening processes:${RESET}" >> $MANUAL_FILE
+ss -tulnp >> $MANUAL_FILE
+echo -e "${GREEN}run sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE)${RESET}" >> $MANUAL_FILE
 
 printlog "Script Complete."
 
@@ -448,6 +451,6 @@ echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a
 echo -e "${GREEN}Configure users\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure groups\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure Firefox\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Modify user privileges${RESET}" | sudo tee -a $MANUAL_FILE
+echo -e "${GREEN}Modify user privileges\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure Apparmor\n${RESET}" | sudo tee -a $MANUAL_FILE
 echo -e "${GREEN}Configure cron/Task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
