@@ -21,6 +21,7 @@ function printlog() {
 	printf "${YELLOW}%s - %s - ${CYAN}%s${RESET}\n" "$(date +"%Y-%m-%d")" "$DURATION" "$*"  >> "$LOG_FILE"
 }
 touch actions.log
+touch manual.log
 chmod 777 "$LOG_FILE"
 chmod 777 "$MANUAL_FILE"
 > "$LOG_FILE"
