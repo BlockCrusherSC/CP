@@ -131,7 +131,7 @@ then
 fi
 
 #Set UID 0 to root
-$rootuid=(id -u root)
+rootuid=$(id -u root)
 if [[ $rootuid == 0 ]];
 then
 	printlog "Root UID is already 0. No changes needed."
