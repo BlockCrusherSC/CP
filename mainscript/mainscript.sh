@@ -20,6 +20,9 @@ function printlog() {
 	echo -e "${CYAN}$1${RESET}"
 	printf "${YELLOW}%s - %s - ${CYAN}%s${RESET}\n" "$(date +"%Y-%m-%d")" "$DURATION" "$*"  >> "$LOG_FILE"
 }
+function manualtask() {
+echo -e "${GREEN}$1\n${RESET}" | sudo tee -a $MANUAL_FILE
+}
 touch actions.log
 touch manual.log
 chmod 777 "$LOG_FILE"
@@ -84,7 +87,6 @@ touch /usr/share/pam-configs/faillock >> $LOG_FILE
 echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n	[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
 echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
-echo -e "run sudo pam-auth update, then toggle Notify on failed login attempts and Enforce failed login attempt counter." | sudo tee -a $MANUAL_LOG
 
 #Enable Firewall
 printlog "Enabling firewall..."
@@ -125,8 +127,8 @@ printlog "Does this computer use GNOME?"
 read gnome
 if [[ $gnome == yes || $gnome == y ]];
 then
-	echo -e "${GREEN}In Settings > Sharing, turn off any screen sharing or remote login options\n${RESET}" | sudo tee -a $MANUAL_FILE 
-	echo -e "${GREEN}Go to Settings > Privacy > Screen Lock and ensure it’s enabled${RESET}" | sudo tee -a $MANUAL_FILE
+	manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
+	manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
  	echo "..."
 	printlog "GNOME configured."
 fi
@@ -198,11 +200,9 @@ appremoval sbd
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
 printlog "Common games removed."
 
-#apt-get purge apache2 lighttpd nikto nginx nmap tcpdump wireshark zenmap logkeys snmpd inetutils-inetd john john-data hydra hydra-gtk aircrack-ng fcrackzip lcrack ophcrack ophcrack-cli pdfcrack pyrit rarcrack sipcrack irpas zeitgeist-core zeitgeist-datahub python-zeitgeist rhythmbox-plugin-zeitgeist zeitgeist burpsuite netcat netcat-openbsd netcat-traditional ncat pnetcat socat sock socket sbd -y -qq >> $LOG_FILE
-echo -e "${GREEN}Applications with hack or crack in the name (remove these):${RESET}" | sudo tee -a $MANUAL_FILE
+manualtask "Applications with hack or crack in the name (remove these):"
 dpkg -l | grep -E 'hack|crack' >> $MANUAL_FILE
 printlog "Common hacking tools removed, and apps with hack or crack have been scanned for."
-#DELETE NETCAT BACKDOOR PROCESS
 
 #Allow only root in cron
 touch /etc/cron.allow
@@ -252,7 +252,8 @@ then
 	printlog "sshd_config permissions configured."
 	printlog "For SSH: Default port changed, PermitRootLogin set to no, MaxAuthTries set to 3, Client closes after 4 minutes inactive, LoginGraceTime set to 20, PermitEmptyPasswords is set to no, HostBasedAuthentication set to no, and StrictModes is set to yes."
 	systemctl restart sshd >> $LOG_FILE
-	printlog "SSH restarted. (GREEN) Optional SSH tasks include MaxSessions, TCPKeepAlive, & changing default port. ${RESET}"
+	printlog "SSH restarted."
+ 	manualtask "Optional SSH tasks include MaxSessions, TCPKeepAlive, & changing default port."
 elif [[ $sshstatus == "no" || $sshstatus == "n" ]];
 then
 	apt-get purge -y --auto-remove openssh-server openssh-client >> $LOG_FILE
@@ -421,14 +422,9 @@ apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
 #---------- MANUAL TASKS -----------#
-echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a $MANUAL_FILE
-function manualtask() {
-echo -e "${GREEN}$1\n${RESET}" | sudo tee -a $MANUAL_FILE
-}
 
-#Files with perms of 700-777
-manualtask "Check files with a permission of 700-777:"
-ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
+#Enable lockout policy
+manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
 
 #Strange admins
 manualtask "Check for strange administrators:"
@@ -436,7 +432,7 @@ mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
 
 #Strange users
 manualtask "Check for strange users:"
-mawk -F: '$3 < 1000 || $3 > 65534 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
+mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 #Check listening processes
 "Check listening processes:"
@@ -444,6 +440,12 @@ ss -tulnp >> $MANUAL_FILE
 
 #Check startup
 manualtask "Run sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
+
+#Files with perms of 700-777
+manualtask "Check files with a permission of 700-777:"
+ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
+
+#Other
 manualtask "Configure users (unathorized, auto-login, insecure password, privileges)"
 manualtask "Configure groups"
 manualtask "Configure Firefox"
