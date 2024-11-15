@@ -448,8 +448,7 @@ ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
 #Other
 manualtask "Configure users (unathorized, auto-login, insecure password, privileges)"
 manualtask "Configure groups"
-manualtask "Configure Firefox"
-manualtask "ENABLE LOCKOUT POLICY"
+manualtask "Configure browser"
 manualtask "Configure Apparmor"
 
 printlog "Script Complete."
