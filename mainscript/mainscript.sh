@@ -229,13 +229,14 @@ printlog "AppArmor installed, started, and enabled by default."
 echo "exec true" >> /etc/init/control-alt-delete.override
 printlog "Ctrl+Alt+Delete reboot disabled."
 
-#Startup Scripts Removed
+#rc.local
+sudo systemctl status rc-local.service
 #cp /etc/rc.local $BACKUPDIR/rc.local
 #chmod 777 $BACKUPDIR/rc.local
 #printlog "rc.local has been backed up."
 #echo > /etc/rc.local
 #echo 'exit 0' >> /etc/rc.local
-#printlog "Any startup scripts have been removed."
+#printlog "Any rc.local startup scripts have been removed."
 
 #Optional Applictions
     #SSH
@@ -419,38 +420,34 @@ apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
+#---------- MANUAL TASKS -----------#
+echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a $MANUAL_FILE
+function manualtask() {
+echo -e "${GREEN}$1\n${RESET}" | sudo tee -a $MANUAL_FILE
+}
+
 #Files with perms of 700-777
-echo -e "${GREEN}Check files with a permission of 700-777:${RESET}" | sudo tee -a $MANUAL_FILE
+manualtask "Check files with a permission of 700-777:"
 ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
 
 #Strange admins
-echo -e "${GREEN}Check for strange administrators:${RESET}" | sudo tee -a $MANUAL_FILE
+manualtask "Check for strange administrators:"
 mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
+
 #Strange users
-echo -e "${GREEN}Check for strange users:${RESET}" | sudo tee -a $MANUAL_FILE
+manualtask "Check for strange users:"
 mawk -F: '$3 < 1000 || $3 > 65534 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
-#Check crontab for startups
-echo -e "${GREEN}Listening processes:${RESET}" >> $MANUAL_FILE
+#Check listening processes
+"Check listening processes:"
 ss -tulnp >> $MANUAL_FILE
-echo -e "${GREEN}run sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE)${RESET}" >> $MANUAL_FILE
+
+#Check startup
+manualtask "Run sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
+manualtask "Configure users (unathorized, auto-login, insecure password, privileges)"
+manualtask "Configure groups"
+manualtask "Configure Firefox"
+manualtask "ENABLE LOCKOUT POLICY"
+manualtask "Configure Apparmor"
 
 printlog "Script Complete."
-
-echo -e "${CYAN}Please complete the following manually:\n${RESET}" | sudo tee -a $MANUAL_FILE
-#function manualtask() {
-#echo -e "${GREEN}$1\n${RESET}" | sudo tee -a $MANUAL_FILE
-#}
-#manualtask "Configure users"
-#manualtask "Configure groups"
-#manualtask "Configure Firefox"
-#manualtask "Modify user privileges"
-#manualtask "Configure Apparmor"
-#manualtask "Check for suspicious activities"
-#manualtask "Configure cron/Task scheduler"
-echo -e "${GREEN}Configure users\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Configure groups\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Configure Firefox\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Modify user privileges\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Configure Apparmor\n${RESET}" | sudo tee -a $MANUAL_FILE
-echo -e "${GREEN}Configure cron/Task scheduler\n${RESET}" | sudo tee -a $MANUAL_FILE
