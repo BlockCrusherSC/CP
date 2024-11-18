@@ -110,6 +110,20 @@ chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
 printlog "sysctl.conf configured."
 
+#Allow only root in cron
+touch /etc/cron.allow
+touch /etc/cron.deny
+chmod 600 /etc/cron.allow >> $LOG_FILE
+chmod 600 /etc/cron.deny >> $LOG_FILE
+chmod 700 /var/spool/cron/crontabs >> $LOG_FILE
+printlog "Cron directories limited & created if they didn't exist."
+
+#Remove startup tasks from crontab
+crontab -l > /importfiles/cronjobs.txt
+printlog "crontab jobs backed up."
+crontab -r >> $LOG_FILE
+printlog "crontab scheduled jobs removed with crontab -r."
+
 #Graphics software configuration
 printlog "Does the computer use LightDM?"
 read lightdm
@@ -148,6 +162,7 @@ fi
 #Lock Root Account
 passwd -l root >> $LOG_FILE
 printlog "Root account locked."
+
 #Unalias accounts
 unalias -a
 printlog "All alias have been removed."
@@ -203,21 +218,6 @@ printlog "Common games removed."
 manualtask "Applications with hack or crack in the name (remove these):"
 dpkg -l | grep -E 'hack|crack' >> $MANUAL_FILE
 printlog "Common hacking tools removed, and apps with hack or crack have been scanned for."
-
-#Allow only root in cron
-touch /etc/cron.allow
-touch /etc/cron.deny
-chmod 600 /etc/cron.allow >> $LOG_FILE
-chmod 600 /etc/cron.deny >> $LOG_FILE
-chmod 700 /var/spool/cron/crontabs >> $LOG_FILE
-printlog "Cron directories limited & created if they didn't exist."
-
-#Remove startup tasks from crontab
-#!!!!
-#!!!!
-#!!!!
-#!!!!
-#!!!!
 
 #Install AppArmor
 apt-get install apparmor apparmor-utils apparmor-profiles -y -qq >> $LOG_FILE
@@ -439,7 +439,7 @@ mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 ss -tulnp >> $MANUAL_FILE
 
 #Check startup
-manualtask "Run sudo nano /etc/crontab to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
+manualtask "Run sudo nano /etc/crontab and crontab -l to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
 
 #Files with perms of 700-777
 manualtask "Check files with a permission of 700-777:"
