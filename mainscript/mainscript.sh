@@ -369,18 +369,22 @@ else
 fi
 
     #MySQL
-#echo "Does this computer need MySQL?"
-#read mysqlstatus
-#if [[ $mysqlstatus == "yes" || $mysqlstatus == "y" ]];
-#then
-#elif [[ $mysqlstatus == "no" || $mysqlstatus == "n" ]];
-#then
-	#apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-* -y -qq >> $LOG_FILE
- 	#rm -rf /etc/mysql /var/lib/mysql >> $LOG_FILE
-  	#ufw deny 3306
-#else
-#    printlog "Invalid response given. MySQL has not been configured."
-#fi
+echo "Does this computer need MySQL?"
+read mysqlstatus
+if [[ $mysqlstatus == "yes" || $mysqlstatus == "y" ]];
+then
+	echo "..."
+elif [[ $mysqlstatus == "no" || $mysqlstatus == "n" ]];
+then
+	apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-* -y -qq >> $LOG_FILE
+ 	rm -rf /etc/mysql /var/lib/mysql >> $LOG_FILE
+  	ufw deny 3306
+   	deluser mysql >> $LOG_FILE
+    	delgroup mysql >> $LOG_FILE
+     	printlog "MySQL removed and port 3306 removed."
+else
+	printlog "Invalid response given. MySQL has not been configured."
+fi
 
     #DNS
 echo "Does this computer need DNS?"
@@ -423,6 +427,14 @@ apt-get autoremove -y -qq >> $LOG_FILE
 apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
+
+#clamscan
+apt-get install clamav -y -qq >> $LOG_FILE
+printlog "clamav installed. Running clamscan (will take a LONG time)..."
+manualtask "Clamscan infected files:"
+clamscan --bell --recursive -i >> $MANUAL_FILE
+printlog "Scan complete."
+manualtask "Scan complete."
 
 #---------- MANUAL TASKS -----------#
 
