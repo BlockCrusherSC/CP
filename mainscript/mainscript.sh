@@ -375,6 +375,9 @@ fi
 #then
 #elif [[ $mysqlstatus == "no" || $mysqlstatus == "n" ]];
 #then
+	#apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-* -y -qq >> $LOG_FILE
+ 	#rm -rf /etc/mysql /var/lib/mysql >> $LOG_FILE
+  	#ufw deny 3306
 #else
 #    printlog "Invalid response given. MySQL has not been configured."
 #fi
