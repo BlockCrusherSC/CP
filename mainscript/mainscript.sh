@@ -420,6 +420,10 @@ then
  	cp /etc/apache2/apache2.conf $BACKUPDIR/apache2.conf
   	chmod 777 $BACKUPDIR/apache2.conf
   	printlog "apache2.conf backed up."
+   	sudo chown root:root /etc/apache2/apache2.conf >> $LOG_FILE
+    	chmod 644 /etc/apache2/apache2.conf >> $LOG_FILE
+     	"apache2.conf ownership and permissions set."
+	
 elif [[ $dnsstatus == "no" || $dnsstatus == "n" ]];
 then
 	ufw deny apache full >> $LOG_FILE
