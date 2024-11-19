@@ -122,7 +122,7 @@ printlog "Cron directories limited & created if they didn't exist."
 crontab -l > /importfiles/cronjobs.txt
 printlog "crontab jobs backed up."
 crontab -r >> $LOG_FILE
-printlog "Sudo crontab scheduled jobs removed with crontab -r."
+printlog "Root crontab scheduled jobs removed with crontab -r."
 
 #Graphics software configuration
 printlog "Does the computer use LightDM?"
@@ -409,13 +409,22 @@ then
 	ufw allow http >> $LOG_FILE
  	ufw allow https >> $LOG_FILE
 	printlog "HTTP and HTTPS ports opened."
+ 	cp /etc/apache2/apache2.conf $BACKUPDIR/apache2.conf
+  	printlog "apache2.conf backed up."
 elif [[ $dnsstatus == "no" || $dnsstatus == "n" ]];
 then
 	ufw deny apache full >> $LOG_FILE
 	printlog "HTTP and HTTPS ports closed."
+ 	systemctl stop apache2 >> $LOG_FILE
+  	apt-get remove --purge apache2 apache2-utils apache2-bin apache2.2-common -y -qq >> $LOG_FILE
+   	rm -rf /etc/apache2
+    	rm -rf /var/log/apache2
+     	printlog "apache2 web server removed."
 else
 	printlog "Invalid response given. Web server has not been configured."
 fi
+
+	
 echo "Can users have media files? (COULD BREAK STUFF)"
 read mediastatus
 if [[ $mediastatus == "no" || $mediastatus == "n" ]];
