@@ -122,7 +122,7 @@ printlog "Cron directories limited & created if they didn't exist."
 crontab -l > /importfiles/cronjobs.txt
 printlog "crontab jobs backed up."
 crontab -r >> $LOG_FILE
-printlog "crontab scheduled jobs removed with crontab -r."
+printlog "Sudo crontab scheduled jobs removed with crontab -r."
 
 #Graphics software configuration
 printlog "Does the computer use LightDM?"
@@ -230,7 +230,7 @@ echo "exec true" >> /etc/init/control-alt-delete.override
 printlog "Ctrl+Alt+Delete reboot disabled."
 
 #rc.local
-sudo systemctl status rc-local.service
+#sudo systemctl status rc-local.service
 #cp /etc/rc.local $BACKUPDIR/rc.local
 #chmod 777 $BACKUPDIR/rc.local
 #printlog "rc.local has been backed up."
@@ -402,8 +402,20 @@ else
 fi
 
     #Web Server
-#echo "Is this computer a Web Server?"
-
+#echo "Is this computer a Web Server ? (like apache2)"
+read webstatus
+if [[ $webstatus == "yes" || $webstatus == "y" ]];
+then
+	ufw allow http >> $LOG_FILE
+ 	ufw allow https >> $LOG_FILE
+	printlog "HTTP and HTTPS ports opened."
+elif [[ $dnsstatus == "no" || $dnsstatus == "n" ]];
+then
+	ufw deny apache full >> $LOG_FILE
+	printlog "HTTP and HTTPS ports closed."
+else
+	printlog "Invalid response given. Web server has not been configured."
+fi
 echo "Can users have media files? (COULD BREAK STUFF)"
 read mediastatus
 if [[ $mediastatus == "no" || $mediastatus == "n" ]];
@@ -429,12 +441,19 @@ apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
 #clamscan
-apt-get install clamav -y -qq >> $LOG_FILE
-printlog "clamav installed. Running clamscan (will take a LONG time)..."
-manualtask "Clamscan infected files:"
-clamscan --bell --recursive -i >> $MANUAL_FILE
-printlog "Scan complete."
-manualtask "Scan complete."
+echo "Do you want to clamscan?"
+read clam
+if [[ $clam == "yes" || $clam == "y" ]];
+then
+	apt-get install clamav -y -qq >> $LOG_FILE
+	printlog "clamav installed. Running clamscan (will take a LONG time)..."
+	manualtask "Clamscan infected files:"
+	clamscan --bell --recursive -i >> $MANUAL_FILE
+	printlog "Scan complete."
+	manualtask "Scan complete."
+ else
+ 	printlog "Clamscan not run."
+fi
 
 #---------- MANUAL TASKS -----------#
 
@@ -465,5 +484,6 @@ manualtask "Configure users (unathorized, auto-login, insecure password, privile
 manualtask "Configure groups"
 manualtask "Configure browser"
 manualtask "Configure Apparmor"
+manualtask "Configure settings & Software & Updates"
 
 printlog "Script Complete."
