@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# Ensure unattended-upgrades is installed
-sudo apt update
-sudo apt install -y unattended-upgrades
+echo "Configuring update settings..."
 
-# Enable automatic updates
-sudo dpkg-reconfigure --priority=low unattended-upgrades
+# Subscribe to "All updates"
+sudo sed -i 's/^Prompt=.*/Prompt=normal/' /etc/update-manager/release-upgrades
 
-# Set the update frequency to daily
+# Set automatic update checks to daily
 sudo sed -i 's/^APT::Periodic::Update-Package-Lists ".*";/APT::Periodic::Update-Package-Lists "1";/' /etc/apt/apt.conf.d/10periodic
 sudo sed -i 's/^APT::Periodic::Download-Upgradeable-Packages ".*";/APT::Periodic::Download-Upgradeable-Packages "1";/' /etc/apt/apt.conf.d/10periodic
-sudo sed -i 's/^APT::Periodic::AutocleanInterval ".*";/APT::Periodic::AutocleanInterval "7";/' /etc/apt/apt.conf.d/10periodic
 sudo sed -i 's/^APT::Periodic::Unattended-Upgrade ".*";/APT::Periodic::Unattended-Upgrade "1";/' /etc/apt/apt.conf.d/10periodic
 
-echo "System is configured to check for updates daily."
+# Security updates: Display immediately
+sudo sed -i 's/^Update-Manager::Security-Updates ".*";/Update-Manager::Security-Updates "1";/' /etc/apt/apt.conf.d/10periodic
+
+# Other updates: Display every two weeks
+sudo sed -i 's/^APT::Periodic::AutocleanInterval ".*";/APT::Periodic::AutocleanInterval "14";/' /etc/apt/apt.conf.d/10periodic
+
+# Notify me of a new Ubuntu version: Set to "never"
+sudo sed -i 's/^Prompt=.*/Prompt=never/' /etc/update-manager/release-upgrades
+
+echo "Update settings configured successfully!"
