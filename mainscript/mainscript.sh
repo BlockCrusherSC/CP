@@ -172,10 +172,8 @@ function appremoval () {
     sudo apt-get purge --auto-remove -y -qq "$1" >> $LOG_FILE
     printlog "$1 removed."
 }
-appremoval apache2
 appremoval lighttpd
 appremoval nikto
-appremoval nginx
 appremoval nmap
 appremoval tcpdump
 appremoval wireshark
@@ -389,7 +387,7 @@ then
   	ufw deny 3306
    	deluser mysql >> $LOG_FILE
     	delgroup mysql >> $LOG_FILE
-     	printlog "MySQL removed and port 3306 removed."
+     	printlog "MySQL removed and port 3306 closed."
 else
 	printlog "Invalid response given. MySQL has not been configured."
 fi
@@ -409,10 +407,10 @@ else
 	printlog "Invalid response given. DNS has not been configured."
 fi
 
-    #Web Server
-#echo "Is this computer a Web Server ? (like apache2)"
-read webstatus
-if [[ $webstatus == "yes" || $webstatus == "y" ]];
+    #Web Servers
+echo "Does this computer need apache2?"
+read apache
+if [[ $apache == "yes" || $apache == "y" ]];
 then
 	ufw allow http >> $LOG_FILE
  	ufw allow https >> $LOG_FILE
@@ -424,19 +422,30 @@ then
     	chmod 644 /etc/apache2/apache2.conf >> $LOG_FILE
      	"apache2.conf ownership and permissions set."
 	
-elif [[ $dnsstatus == "no" || $dnsstatus == "n" ]];
+elif [[ $apache == "no" || $apache == "n" ]];
 then
 	ufw deny apache full >> $LOG_FILE
-	printlog "HTTP and HTTPS ports closed."
  	systemctl stop apache2 >> $LOG_FILE
   	apt-get remove --purge apache2 apache2-utils apache2-bin apache2.2-common -y -qq >> $LOG_FILE
    	rm -rf /etc/apache2
     	rm -rf /var/log/apache2
-     	printlog "apache2 web server removed."
+     	printlog "apache2 removed."
 else
-	printlog "Invalid response given. Web server has not been configured."
+	printlog "Invalid response given. Apache2 has not been configured."
 fi
 
+echo "Does this computer need nginx?"
+read nginx
+if [[ $nginx == "yes" || $nginx == "y" ]];
+then
+	echo "..."
+elif [[ $nginx == "no" || $nginx == "n" ]];
+then
+	apt-get purge nginx nginx-full nginx-extras
+ 	printlog "nginx removed."
+else
+	printlog "Invalid response given. Nginx has not been configured."
+fi
 	
 echo "Can users have media files? (COULD BREAK STUFF)"
 read mediastatus
