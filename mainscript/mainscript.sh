@@ -31,7 +31,7 @@ chmod 777 "$MANUAL_FILE"
 > "$MANUAL_FILE"
 printlog "Script Started."
 #Ensure importfiles folder is installed
-echo -e "${RED}UPDATE AND UPGRADE FIRST!!! Is importfiles installed and taken out of downloads, and apt-get update has been run?${RESET}"
+echo -e "${RED}UPDATE AND UPGRADE FIRST!!! Is importfiles installed and taken out of downloads, and file paths for required services (like apache2) have been confirmed?${RESET}"
 read importfiles
 if [[ $importfiles == "yes" || $importfiles == "y" ]];
 then
@@ -387,24 +387,9 @@ then
   	ufw deny 3306
    	deluser mysql >> $LOG_FILE
     	delgroup mysql >> $LOG_FILE
-     	printlog "MySQL removed and port 3306 closed."
+     	printlog "MySQL removed, group deleted, and port 3306 closed."
 else
 	printlog "Invalid response given. MySQL has not been configured."
-fi
-
-    #DNS
-echo "Does this computer need DNS?"
-read dnsstatus
-if [[ $dnsstatus == "yes" || $dnsstatus == "y" ]];
-then
-	ufw allow 53 >> $LOG_FILE
-	printlog "Port 53 (domain) opened."
-elif [[ $dnsstatus == "no" || $dnsstatus == "n" ]];
-then
-	ufw deny 53 >> $LOG_FILE
-	printlog "Port 53 (domain) closed and DNS NAME BINDING???."
-else
-	printlog "Invalid response given. DNS has not been configured."
 fi
 
     #Web Servers
@@ -418,6 +403,8 @@ then
  	cp /etc/apache2/apache2.conf $BACKUPDIR/apache2.conf
   	chmod 777 $BACKUPDIR/apache2.conf
   	printlog "apache2.conf backed up."
+	cp importfiles/apache2.conf /etc/apache2/apache2.conf
+ 	printlog "apache2.conf configured."
    	sudo chown root:root /etc/apache2/apache2.conf >> $LOG_FILE
     	chmod 644 /etc/apache2/apache2.conf >> $LOG_FILE
      	"apache2.conf ownership and permissions set."
@@ -441,7 +428,7 @@ then
 	echo "..."
 elif [[ $nginx == "no" || $nginx == "n" ]];
 then
-	apt-get purge nginx nginx-full nginx-extras
+	apt-get purge nginx nginx-full nginx-extras -y -qq >> $LOG_FILE
  	printlog "nginx removed."
 else
 	printlog "Invalid response given. Nginx has not been configured."
@@ -458,7 +445,7 @@ then
 	find / -type f \( -name "*.mpeg" -o -name "*.mpe" -o -name "*.dl" -o -name "*.movie" -o -name "*.movi" -o -name "*.mv" -o -name "*.iff" -o -name "*.anim5" -o -name "*.anim3" -o -name "*.anim7" -o -name "*.avi" -o -name "*.vfw" -o -name "*.avx" -o -name "*.fli" -o -name "*.flc" -o -name "*.mov" -o -name "*.qt" -o -name "*.spl" -o -name "*.swf" -o -name "*.dcr" -o -name "*.dxr" -o -name "*.rpm" -o -name "*.rm" -o -name "*.smi" -o -name "*.ra" -o -name "*.ram" -o -name "*.rv" -o -name "*.wmv" -o -name "*.asf" -o -name "*.asx" -o -name "*.wma" -o -name "*.wax" -o -name "*.wmv" -o -name "*.wmx" -o -name "*.3gp" -o -name "*.mov" -o -name "*.mp4" -o -name "*.avi" -o -name "*.swf" -o -name "*.flv" -o -name "*.m4v" \) -delete 2>> $LOG_FILE
 	printlog "Video files removed."
 	#image files
-	find /home -type f \( -name "*.tiff" -o -name "*.tif" -o -name "*.rs" -o -name "*.im1" -o -name "*.gif" -o -name "*.jpeg" -o -name "*.jpg" -o -name "*.jpe" -o -name "*.png" -o -name "*.rgb" -o -name "*.xwd" -o -name "*.xpm" -o -name "*.ppm" -o -name "*.pbm" -o -name "*.pgm" -o -name "*.pcx" -o -name "*.ico" -o -name "*.svg" -o -name "*.svgz" \) -delete 2>> $LOG_FILE
+	find / -type f \( -name "*.tiff" -o -name "*.tif" -o -name "*.rs" -o -name "*.im1" -o -name "*.gif" -o -name "*.jpeg" -o -name "*.jpg" -o -name "*.jpe" -o -name "*.png" -o -name "*.rgb" -o -name "*.xwd" -o -name "*.xpm" -o -name "*.ppm" -o -name "*.pbm" -o -name "*.pgm" -o -name "*.pcx" -o -name "*.ico" -o -name "*.svg" -o -name "*.svgz" \) -delete 2>> $LOG_FILE
 	printlog "Image files removed."
 	printlog "All media files have been removed."
 else
@@ -491,6 +478,14 @@ fi
 #Enable lockout policy
 manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
 
+#Debsums scan
+#apt-get insall debsums >> $LOG_FILE
+#apt-get --reinstall -d install 'debsums -l' >>$LOG_FILE
+#printlog "Debsums installed."
+#manualtask "Running debsums scan..."
+#debsums -s -a >> $LOG_FILE
+#printlog "Debsums scan complete. Review results in manual log."
+
 #Strange admins
 manualtask "Check for strange administrators:"
 mawk -F: '$1 == "sudo"' /etc/group >> $MANUAL_FILE
@@ -500,7 +495,7 @@ manualtask "Check for strange users:"
 mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 #Check listening processes
-"Check listening processes:"
+manualtask "Check listening processes:"
 ss -tulnp >> $MANUAL_FILE
 
 #Check startup
