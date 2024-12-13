@@ -416,8 +416,6 @@ elif [[ $apache == "no" || $apache == "n" ]];
 then
 	ufw deny apache full >> $LOG_FILE
   	apt-get purge apache2 apache2-utils apache2-bin apache2.2-common -y -qq >> $LOG_FILE
-   	rm -rf /etc/apache2
-    	rm -rf /var/log/apache2
      	printlog "apache2 removed."
 else
 	printlog "Invalid response given. Apache2 has not been configured."
