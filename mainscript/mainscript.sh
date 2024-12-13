@@ -144,10 +144,10 @@ printlog "Root crontab scheduled jobs removed with crontab -r."
 #read gnome
 #if [[ $gnome == yes || $gnome == y ]];
 #then
-manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
-manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
- echo "..."
-printlog "GNOME configured."
+#manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
+#manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
+# echo "..."
+#printlog "GNOME configured."
 #fi
 
 #Set UID 0 to root
