@@ -479,7 +479,7 @@ fi
 #---------- MANUAL TASKS -----------#
 
 #Enable lockout policy
-manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
+manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
 
 #Debsums scan
 #apt-get insall debsums >> $LOG_FILE
