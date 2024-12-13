@@ -479,7 +479,7 @@ apt-get install debsums -y -qq >> $LOG_FILE
 apt-get --reinstall -d install 'debsums -l' -y -qq >> $LOG_FILE
 printlog "Debsums installed."
 manualtask "Running debsums scan..."
-debsums -s -a >> $LOG_FILE
+debsums -s -a >> $LOG_FILE 2>> $LOG_FILE
 printlog "Debsums scan complete. Review results in manual log."
 
 #Strange admins
