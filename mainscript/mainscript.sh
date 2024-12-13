@@ -53,6 +53,11 @@ printlog "/etc/passwd and /etc/group has been backed up in the backups folder."
 
 #Password Policies
 	#libpam-cracklib
+cp /etc/pam.d/common-password $BACKUPDIR/common-password
+chmod 777 $BACKUPDIR/common-password
+printlog "pam.d common password backed up."
+sed -i '/pam_pwquality\.so/d' /etc/pam.d/common-password >> $LOG_FILE
+printlog "pwquality removed from common-password."
 printlog "Installing libpam-cracklib..."
 apt-get install libpam-cracklib -y >> $LOG_FILE
 echo ""
@@ -125,18 +130,18 @@ crontab -r >> $LOG_FILE
 printlog "Root crontab scheduled jobs removed with crontab -r."
 
 #Graphics software configuration
-printlog "Does the computer use LightDM?"
-read lightdm
-if [[ $lightdm == yes || $lightdm == y ]];
+#printlog "Does the computer use LightDM?"
+#read lightdm
+#if [[ $lightdm == yes || $lightdm == y ]];
 #Need to add another in case GNOME is installed
-then
-	cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
-	chmod 777 $BACKUPDIR/lightdm.conf
-	printlog "lightdm.conf backed up."
-	cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
-	chmod 600 /etc/lightdm/lightdm.conf
-	printlog "lightdm.conf permissions configured."
-fi
+#then
+	#cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
+	#chmod 777 $BACKUPDIR/lightdm.conf
+	#printlog "lightdm.conf backed up."
+	#cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
+	#chmod 600 /etc/lightdm/lightdm.conf
+	#printlog "lightdm.conf permissions configured."
+#fi
 printlog "Does this computer use GNOME?"
 read gnome
 if [[ $gnome == yes || $gnome == y ]];
@@ -385,8 +390,6 @@ then
 	apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-* -y -qq >> $LOG_FILE
  	rm -rf /etc/mysql /var/lib/mysql >> $LOG_FILE
   	ufw deny 3306
-   	deluser mysql >> $LOG_FILE
-    	delgroup mysql >> $LOG_FILE
      	printlog "MySQL removed, group deleted, and port 3306 closed."
 else
 	printlog "Invalid response given. MySQL has not been configured."
