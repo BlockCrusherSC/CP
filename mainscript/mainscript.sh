@@ -444,7 +444,7 @@ then
 	#image files
 	find /home -type f \( -name "*.tiff" -o -name "*.tif" -o -name "*.rs" -o -name "*.im1" -o -name "*.gif" -o -name "*.jpeg" -o -name "*.jpg" -o -name "*.jpe" -o -name "*.png" -o -name "*.rgb" -o -name "*.xwd" -o -name "*.xpm" -o -name "*.ppm" -o -name "*.pbm" -o -name "*.pgm" -o -name "*.pcx" -o -name "*.ico" -o -name "*.svg" -o -name "*.svgz" \) -delete 2>> $LOG_FILE
 	printlog "Image files removed."
-	printlog "All media files have been removed."
+	printlog "All media files have been removed within /home directories."
 else
 	printlog "Media files have not been configured."
 fi
