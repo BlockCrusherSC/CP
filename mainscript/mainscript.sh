@@ -52,25 +52,23 @@ chmod 777 $BACKUPDIR/passwd
 printlog "/etc/passwd and /etc/group has been backed up in the backups folder."
 
 #Password Policies
-	#libpam-cracklib
-cp /etc/pam.d/common-password $BACKUPDIR/common-password
-chmod 777 $BACKUPDIR/common-password
-printlog "pam.d common password backed up."
-sed -i '/pam_pwquality\.so/d' /etc/pam.d/common-password >> $LOG_FILE
-printlog "pwquality removed from common-password."
-printlog "Installing libpam-cracklib..."
-apt-get install libpam-cracklib -y >> $LOG_FILE
-echo ""
-printlog "libpam-cracklib installed."
 
-	#common-password:
+	#common-password
 printlog "Configuring passworld policies..."
 cp /etc/pam.d/common-password $BACKUPDIR/common-password
 chmod 777 $BACKUPDIR/common-password
 printlog "common-password backed up."
+sed -i '/pam_pwquality\.so/d' /etc/pam.d/common-password >> $LOG_FILE
+printlog "pwquality removed from common-password."
 sed -i  '/try_first_pass yescrypt/ { /remember=5/! s/$/ remember=5 / }' /etc/pam.d/common-password
 sed -i  '/try_first_pass yescrypt/ { /minlen=8/! s/$/ minlen=8 / }' /etc/pam.d/common-password
 sed -i  '/pam_cracklib.so/ { /ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/! s/$/ ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1 / }' /etc/pam.d/common-password
+
+	#libpam-cracklib
+printlog "Installing libpam-cracklib..."
+apt-get install libpam-cracklib -y >> $LOG_FILE
+echo ""
+printlog "libpam-cracklib installed."
 
 	#login.defs
 cp /etc/login.defs $BACKUPDIR/login.defs
@@ -480,7 +478,7 @@ manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on f
 
 #Debsums scan
 apt-get install debsums -y -qq >> $LOG_FILE
-apt-get --reinstall -d install 'debsums -l' -y -qq >>$LOG_FILE
+apt-get --reinstall -d install 'debsums -l' -y -qq >> $LOG_FILE
 printlog "Debsums installed."
 manualtask "Running debsums scan..."
 debsums -s -a >> $LOG_FILE
