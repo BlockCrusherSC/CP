@@ -482,12 +482,12 @@ fi
 manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
 
 #Debsums scan
-#apt-get insall debsums >> $LOG_FILE
-#apt-get --reinstall -d install 'debsums -l' >>$LOG_FILE
-#printlog "Debsums installed."
-#manualtask "Running debsums scan..."
-#debsums -s -a >> $LOG_FILE
-#printlog "Debsums scan complete. Review results in manual log."
+apt-get install debsums -y -qq >> $LOG_FILE
+apt-get --reinstall -d install 'debsums -l' -y -qq >>$LOG_FILE
+printlog "Debsums installed."
+manualtask "Running debsums scan..."
+debsums -s -a >> $LOG_FILE
+printlog "Debsums scan complete. Review results in manual log."
 
 #Strange admins
 manualtask "Check for strange administrators:"
