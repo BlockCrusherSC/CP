@@ -412,7 +412,6 @@ then
 	
 elif [[ $apache == "no" || $apache == "n" ]];
 then
-	ufw deny apache full >> $LOG_FILE
   	apt-get purge apache2 apache2-utils apache2-bin apache2.2-common -y -qq >> $LOG_FILE
      	printlog "apache2 removed."
 else
@@ -432,7 +431,7 @@ else
 	printlog "Invalid response given. Nginx has not been configured."
 fi
 	
-echo "Can users have media files? (COULD BREAK STUFF)"
+echo "Can users have media files?"
 read mediastatus
 if [[ $mediastatus == "no" || $mediastatus == "n" ]];
 then
