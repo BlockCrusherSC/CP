@@ -140,15 +140,15 @@ printlog "Root crontab scheduled jobs removed with crontab -r."
 	#chmod 600 /etc/lightdm/lightdm.conf
 	#printlog "lightdm.conf permissions configured."
 #fi
-printlog "Does this computer use GNOME?"
-read gnome
-if [[ $gnome == yes || $gnome == y ]];
-then
-	manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
-	manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
- 	echo "..."
-	printlog "GNOME configured."
-fi
+#printlog "Does this computer use GNOME?"
+#read gnome
+#if [[ $gnome == yes || $gnome == y ]];
+#then
+manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
+manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
+ echo "..."
+printlog "GNOME configured."
+#fi
 
 #Set UID 0 to root
 rootuid=$(id -u root)
@@ -454,21 +454,6 @@ apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
-#clamscan
-echo "Do you want to clamscan?"
-read clam
-if [[ $clam == "yes" || $clam == "y" ]];
-then
-	apt-get install clamav -y -qq >> $LOG_FILE
-	printlog "clamav installed. Running clamscan (will take a LONG time)..."
-	manualtask "Clamscan infected files:"
-	clamscan --bell --recursive -i >> $MANUAL_FILE
-	printlog "Scan complete."
-	manualtask "Scan complete."
- else
- 	printlog "Clamscan not run."
-fi
-
 #---------- MANUAL TASKS -----------#
 
 #Enable lockout policy
@@ -507,5 +492,20 @@ manualtask "Configure groups"
 manualtask "Configure browser"
 manualtask "Configure Apparmor"
 manualtask "Configure settings & Software & Updates"
+
+#clamscan
+echo "Do you want to clamscan?"
+read clam
+if [[ $clam == "yes" || $clam == "y" ]];
+then
+	apt-get install clamav -y -qq >> $LOG_FILE
+	printlog "clamav installed. Running clamscan (will take a LONG time)..."
+	manualtask "Clamscan infected files:"
+	clamscan --bell --recursive -i >> $MANUAL_FILE
+	printlog "Scan complete."
+	manualtask "Scan complete."
+ else
+ 	printlog "Clamscan not run."
+fi
 
 printlog "Script Complete."
