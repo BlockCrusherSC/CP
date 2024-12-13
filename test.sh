@@ -1,8 +1,8 @@
 #!/bin/bash
 #Debsums scan
-apt-get insall debsums
+apt-get install debsums
 apt-get --reinstall -d install 'debsums -l'
-printlog "Debsums installed."
-manualtask "Running debsums scan..."
+echo "Debsums installed."
+echo "Running debsums scan..."
 debsums -s -a
-printlog "Debsums scan complete. Review results in manual log."
+echo "Debsums scan complete. Review results in manual log."
