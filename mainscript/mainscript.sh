@@ -265,7 +265,7 @@ then
  	manualtask "Optional SSH tasks include MaxSessions, TCPKeepAlive, & changing default port."
 elif [[ $sshstatus == "no" || $sshstatus == "n" ]];
 then
-	apt-get purge -y --auto-remove openssh-server openssh-client >> $LOG_FILE
+	apt-get purge openssh-server openssh-client -y -qq >> $LOG_FILE
 	ufw deny ssh >> $LOG_FILE
 	printlog "SSH removed and SSH port closed."
 else
