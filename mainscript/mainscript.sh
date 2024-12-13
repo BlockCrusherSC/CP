@@ -451,7 +451,6 @@ else
 fi
 
 #Remove Unecessary Packages
-apt-get autoremove -y -qq >> $LOG_FILE
 apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
@@ -475,7 +474,7 @@ fi
 
 #Enable lockout policy
 manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
-
+manualtask "AUTOREMOVE apt-get autoremove"
 #Debsums scan
 apt-get install debsums -y -qq >> $LOG_FILE
 apt-get --reinstall -d install 'debsums -l' -y -qq >> $LOG_FILE
