@@ -127,28 +127,11 @@ printlog "crontab jobs backed up."
 crontab -r >> $LOG_FILE
 printlog "Root crontab scheduled jobs removed with crontab -r."
 
-#Graphics software configuration
-#printlog "Does the computer use LightDM?"
-#read lightdm
-#if [[ $lightdm == yes || $lightdm == y ]];
-#Need to add another in case GNOME is installed
-#then
-	#cp /etc/lightdm/lightdm.conf $BACKUPDIR/lightdm.conf
-	#chmod 777 $BACKUPDIR/lightdm.conf
-	#printlog "lightdm.conf backed up."
-	#cp importfiles/lightdm.conf /etc/lightdm/lightdm.conf
-	#chmod 600 /etc/lightdm/lightdm.conf
-	#printlog "lightdm.conf permissions configured."
-#fi
-#printlog "Does this computer use GNOME?"
-#read gnome
-#if [[ $gnome == yes || $gnome == y ]];
-#then
-#manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
-#manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
-# echo "..."
-#printlog "GNOME configured."
-#fi
+#GNOME configuration
+manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
+manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
+echo "..."
+printlog "GNOME configured."
 
 #Set UID 0 to root
 rootuid=$(id -u root)
