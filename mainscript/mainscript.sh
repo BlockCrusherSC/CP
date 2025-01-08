@@ -214,7 +214,7 @@ echo "exec true" >> /etc/init/control-alt-delete.override
 printlog "Ctrl+Alt+Delete reboot disabled."
 
 #rc.local
-if systemctl is-active --quiet rc-local.service;
+if systemctl is-active -q rc-local.service;
 then
 	echo "rc-local.service is active."
 
@@ -435,7 +435,11 @@ fi
 #Remove Unecessary Packages
 apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
+apt-get autoremove -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
+
+systemctl restart sshd
+printlog "sshd restarted."
 
 #---------- MANUAL TASKS -----------#
 
@@ -444,7 +448,6 @@ manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on f
 manualtask "AUTOREMOVE apt-get autoremove"
 #Debsums scan
 apt-get install debsums -y -qq >> $LOG_FILE
-apt-get --reinstall -d install 'debsums -l' -y -qq >> $LOG_FILE
 printlog "Debsums installed."
 manualtask "Running debsums scan..."
 debsums -s -a >> $LOG_FILE 2>> $LOG_FILE
