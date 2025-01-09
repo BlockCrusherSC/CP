@@ -405,7 +405,13 @@ echo "Does this computer need nginx?"
 read nginx
 if [[ $nginx == "yes" || $nginx == "y" ]];
 then
-	echo "..."
+	cp /etc/nginx/nginx.conf $BACKUPDIR/nginx.conf
+	chmod 777 $BACKUPDIR/nginx.conf
+	printlog "nginx.conf backed up."
+	cp importfiles/nginx.conf /etc/nginx/nginx.conf
+	chmod 600 /etc/nginx/nginx.conf
+	printlog "nginx.conf permissions configured."
+ 	echo "... (add more stuff)"
 elif [[ $nginx == "no" || $nginx == "n" ]];
 then
 	apt-get purge nginx nginx-full nginx-extras -y -qq >> $LOG_FILE
