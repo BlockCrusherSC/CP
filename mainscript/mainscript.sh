@@ -441,6 +441,7 @@ fi
 #Remove Unecessary Packages
 apt-get autoclean -y -qq >> $LOG_FILE
 apt-get clean -y -qq >> $LOG_FILE
+apt-get autoremove -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
 systemctl restart sshd
