@@ -207,7 +207,9 @@ printlog "Common hacking tools removed, and apps with hack or crack have been sc
 apt-get install apparmor apparmor-utils apparmor-profiles -y -qq >> $LOG_FILE
 systemctl start apparmor >> $LOG_FILE 2>&1
 systemctl enable apparmor >> $LOG_FILE 2>&1
-printlog "AppArmor installed, started, and enabled by default."
+aa-enforce /etc/apparmor.d/* >> $LOG_FILE 2>&1
+sed -i 's/^GRUB_CMDLINE_LINUX="".*/GRUB_CMDLINE_LINUX="apparmor=1 security=apparmor/' /etc/default/grub
+printlog "AppArmor installed, started, and enabled by default. All profiles set to enforce."
 
 #Disable Ctrl+Alt+Delete Reboot
 echo "exec true" >> /etc/init/control-alt-delete.override
@@ -482,7 +484,6 @@ ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
 manualtask "Configure users (unathorized, auto-login, insecure password, privileges)"
 manualtask "Configure groups"
 manualtask "Configure browser"
-manualtask "Configure Apparmor"
 manualtask "Configure settings & Software & Updates"
 
 #clamscan
