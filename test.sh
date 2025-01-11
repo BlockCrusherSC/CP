@@ -32,6 +32,3 @@ nmcli networking off
 
 # Disable Wi-Fi if not needed
 nmcli radio wifi off
-
-#sudo apt-get install -y unattended-upgrades
-#sudo dpkg-reconfigure --priority=low unattended-upgrades
