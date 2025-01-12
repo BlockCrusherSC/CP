@@ -174,7 +174,7 @@ printlog "Root account locked."
 #su group created and restricted
 groupadd sugroup
 echo "auth required pam_wheel.so use_uid group=sugroup" | sudo tee -a /etc/pam.d/su
-printlog "su group created and restricted in /etc/pam.d/su"
+printlog "group sugroup created and restricted in /etc/pam.d/su"
 #Unalias accounts
 unalias -a
 printlog "All alias have been removed."
