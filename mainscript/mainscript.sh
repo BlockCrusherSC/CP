@@ -203,7 +203,6 @@ apt-get install apparmor apparmor-utils apparmor-profiles -y -qq >> $LOG_FILE
 systemctl start apparmor >> $LOG_FILE 2>&1
 systemctl enable apparmor >> $LOG_FILE 2>&1
 aa-enforce /etc/apparmor.d/* >> $LOG_FILE 2>&1
-sed -i 's/^GRUB_CMDLINE_LINUX="".*/GRUB_CMDLINE_LINUX="apparmor=1 security=apparmor/' /etc/default/grub
 printlog "AppArmor installed, started, and enabled by default. All profiles set to enforce."
 
 #Disable Ctrl+Alt+Delete Reboot
