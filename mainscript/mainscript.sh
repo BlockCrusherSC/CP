@@ -109,6 +109,7 @@ cp /etc/sysctl.conf $BACKUPDIR/sysctl.conf
 chmod 777 $BACKUPDIR/sysctl.conf
 printlog "sysctl.conf backed up."
 cp importfiles/sysctl.conf /etc/sysctl.conf
+sysctl -w net.ipv4.route.flush=1
 chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
 printlog "sysctl.conf configured."
