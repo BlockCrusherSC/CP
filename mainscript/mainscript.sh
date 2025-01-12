@@ -496,9 +496,11 @@ ss -plntu >> $MANUAL_FILE
 #Check startup
 manualtask "Run sudo nano /etc/crontab and crontab -l to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
 
-#Privilege Escelation
-manualtask "sudo visudo /etc/sudoers, check if default is set to use_pty"
-manualtask "sudo visudo /etc/sidpers, add Defaults logfile='/var/log/sudo.log'"
+#Privilege Escalation
+manualtask "sudo visudo /etc/sudoers, add/fix to 'Defaults use_pty'"
+manualtask "sudo visudo /etc/sudoers, add/fix to Defaults 'env_reset, timestamp_timeout=15'"
+manualtask "sudo visudo /etc/sudoers, add 'Defaults logfile=''/var/log/sudo.log''' (DOUBLE QUOTES) "
+manualtask "Remove all instances of NOPASSWD and !authenticate in /etc/sudoers"
 
 #Files with perms of 700-777
 manualtask "Check files with a permission of 700-777:"
