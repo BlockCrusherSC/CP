@@ -98,7 +98,11 @@ ufw enable >> $LOG_FILE
 ufw default deny incoming >> $LOG_FILE
 ufw default allow outgoing >> $LOG_FILE
 ufw deny 1337 >> $LOG_FILE
-printlog "Firewall enabled and port 1337 closed."
+ufw allow in on lo
+ufw allow out on lo
+ufw deny in from 127.0.0.0/8
+ufw deny in from ::1
+printlog "Firewall enabled, port 1337 closed, and loopback traffic is configured."
 
 #Shadow File Perms
 chmod 640 /etc/shadow >> $LOG_FILE
