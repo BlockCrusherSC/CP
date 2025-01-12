@@ -150,7 +150,7 @@ printlog "All alias have been removed."
 
 #Remove Malicious Processes
 function appremoval () {
-    systemctl stop "$1".service >> $LOG_FILE
+    systemctl stop "$1".service >> $LOG_FILE 2>>$LOG_FILE
     sudo apt-get purge --auto-remove -y -qq "$1" >> $LOG_FILE
     printlog "$1 removed."
 }
