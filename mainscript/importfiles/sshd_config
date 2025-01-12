@@ -25,15 +25,15 @@ Include /etc/ssh/sshd_config.d/*.conf
 
 # Logging
 #SyslogFacility AUTH
-#LogLevel INFO
+LogLevel VERBOSE
 
 # Authentication:
 
-LoginGraceTime 20
+LoginGraceTime 30
 PermitRootLogin no
 StrictModes yes
 MaxAuthTries 3
-MaxSessions 4
+MaxSessions 5
 
 #PubkeyAuthentication yes
 
@@ -51,7 +51,7 @@ HostbasedAuthentication no
 # HostbasedAuthentication
 #IgnoreUserKnownHosts no
 # Don't read the user's ~/.rhosts and ~/.shosts files
-#IgnoreRhosts yes
+IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
 #PasswordAuthentication yes
@@ -68,7 +68,7 @@ KbdInteractiveAuthentication no
 #KerberosGetAFSToken no
 
 # GSSAPI options
-#GSSAPIAuthentication no
+GSSAPIAuthentication no
 #GSSAPICleanupCredentials yes
 #GSSAPIStrictAcceptorCheck yes
 #GSSAPIKeyExchange no
@@ -88,19 +88,20 @@ UsePAM yes
 #AllowTcpForwarding yes
 #GatewayPorts no
 X11Forwarding no
+DisableForwarding yes
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
 PrintMotd no
 #PrintLastLog yes
 #TCPKeepAlive yes
-#PermitUserEnvironment no
+PermitUserEnvironment no
 #Compression delayed
-ClientAliveInterval 240
-ClientAliveCountMax 0
+ClientAliveInterval 120
+ClientAliveCountMax 3
 #UseDNS no
 #PidFile /run/sshd.pid
-#MaxStartups 10:30:100
+MaxStartups 10:30:60
 #PermitTunnel no
 #ChrootDirectory none
 #VersionAddendum none
