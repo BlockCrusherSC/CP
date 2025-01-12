@@ -52,23 +52,21 @@ chmod 777 $BACKUPDIR/passwd
 printlog "/etc/passwd and /etc/group has been backed up in the backups folder."
 
 #Password Policies
+	
+ 	#libpam modules
+apt-get install libpam-runtime -y -qq >> $LOG_FILE
+apt-get install libpam-modules -y -qq >> $LOG_FILE
+apt-get install libpam-pwquality -y -qq >> $LOG_FILE
+printlog "libpam-runtime, libpam-pwquality, and libpam-modules installed."
 
 	#common-password
-printlog "Configuring passworld policies..."
+printlog "Configuring password policies..."
 cp /etc/pam.d/common-password $BACKUPDIR/common-password
 chmod 777 $BACKUPDIR/common-password
 printlog "common-password backed up."
-sed -i '/pam_pwquality\.so/d' /etc/pam.d/common-password >> $LOG_FILE
-printlog "pwquality removed from common-password."
 sed -i  '/try_first_pass yescrypt/ { /remember=5/! s/$/ remember=5 / }' /etc/pam.d/common-password
-sed -i  '/try_first_pass yescrypt/ { /minlen=8/! s/$/ minlen=8 / }' /etc/pam.d/common-password
-sed -i  '/pam_cracklib.so/ { /ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/! s/$/ ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1 / }' /etc/pam.d/common-password
-
-	#libpam-cracklib
-printlog "Installing libpam-cracklib..."
-apt-get install libpam-cracklib -y >> $LOG_FILE
-echo ""
-printlog "libpam-cracklib installed."
+sed -i  '/try_first_pass yescrypt/ { /minlen=10/! s/$/ minlen=10 / }' /etc/pam.d/common-password
+sed -i  '/pam_pwquality.so/ { /ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/! s/$/ ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1 / }' /etc/pam.d/common-password
 
 	#login.defs
 cp /etc/login.defs $BACKUPDIR/login.defs
@@ -90,6 +88,8 @@ touch /usr/share/pam-configs/faillock >> $LOG_FILE
 echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n	[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
 echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
+pam-auth-update --enable faillock
+pam-auth-update --enable faillock_notify
 
 #Enable Firewall
 printlog "Enabling firewall..."
