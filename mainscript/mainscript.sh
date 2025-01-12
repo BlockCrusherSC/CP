@@ -133,17 +133,12 @@ manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
 echo "..."
 printlog "GNOME configured."
 
-#Set UID 0 to root
-rootuid=$(id -u root)
-if [[ $rootuid == 0 ]];
-then
-	printlog "Root UID is already 0. No changes needed."
-else
-	printlog "Root UID is not 0. Fixing..."
-	sed -i 's/^root:x:1:0:/root:x:0:0:/' /etc/passwd
-#	find / -user "$rootuid" -exec chown root {} \;
-	printlog "UID for root set to 0 and ownership of files has been fixed."
-fi
+#Set UID & GID 0 to root
+usermod -u 0 root
+usermod -g 0 root
+groupmod -g 0 root
+#find / -user "$rootuid" -exec chown root {} \;
+printlog "UID & GID for root set to 0." #Ownership of files has been fixed."
 
 #Lock Root Account
 passwd -l root >> $LOG_FILE
@@ -274,39 +269,13 @@ else
 fi
 
     #FTP
-echo "Does this computer need FTP?"
-read ftpstatus
-if [[ $ftpstatus == "yes" || $ftpstatus == "y" ]];
-then
-	echo "..."
-elif [[ $ftpstatus == "no" || $ftpstatus == "n" ]];
-then
-	apt-get purge -y -qq vsftpd proftpd >> $LOG_FILE
-	ufw deny ftp >> $LOG_FILE
-	ufw deny sftp >> $LOG_FILE
- 	ufw deny saft >> $LOG_FILE
-  	ufw deny sftps >> $LOG_FILE
-   	ufw deny sftps-data >> $LOG_FILE
-    	printlog "FTP (vsftpd and proftpd) have been removed, and ufw has been configured."
-else
-	printlog "Invalid response given. FTPStatus has not been configured."
-fi
+apt-get purge -y -qq ftp vsftpd proftpd >> $LOG_FILE
+printlog "FTP (vsftpd and proftpd) have been removed."
 
     #Telnet
-echo "Does this computer need Telnet?"
-read telnetstatus
-if [[ $telnetstatus == "yes" || $telnetstatus == "y" ]];
-then
-	echo"..."
-elif [[ $telnetstatus == "no" || $telnetstatus == "n" ]];
-then
-	printlog "Removing telnet..."
-	apt-get purge telnet telnetd -y -qq >> $LOG_FILE
-	ufw deny 23 >> $LOG_FILE
-	printlog "Telnet removed and port 23 closed."
-else
-	printlog "Invalid response given. Telnet has not been configured."
-fi
+apt-get purge telnet telnetd -y -qq >> $LOG_FILE
+ufw deny 23 >> $LOG_FILE
+printlog "Telnet removed and port 23 closed."
 
     #Mail
 echo "Does this computer need Mail?"
