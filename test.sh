@@ -1,34 +1,14 @@
-#!/bin/bash
-# Set screensaver lock delay (seconds)
-dconf write /org/cinnamon/desktop/screensaver/lock-delay 300
+cp /etc/sudoers /etc/sudoers.bak
 
-# Enable screensaver lock
-dconf write /org/cinnamon/desktop/screensaver/lock-enabled true
+# Use sed to replace the line containing "Defaults"
+sed -i '/^Defaults /c\Defaults use_pty' /etc/sudoers
 
-# Enable screen lock when the session is idle
-dconf write /org/cinnamon/settings-daemon/plugins/power/sleep-display-ac 10
-
-# Set session idle delay (seconds)
-dconf write /org/cinnamon/desktop/session/idle-delay 600
-
-# Require password after suspend
-dconf write /org/cinnamon/settings-daemon/plugins/power/sleep-inactive-ac-type 'suspend'
-dconf write /org/cinnamon/settings-daemon/plugins/power/sleep-inactive-battery-type 'suspend'
-
-# Lock the screen on suspend
-dconf write /org/cinnamon/settings-daemon/plugins/power/lock-on-suspend true
-
-# Disable file indexing for privacy
-dconf write /org/cinnamon/desktop/search-providers/enabled "[]"
-
-# Clear recent files
-dconf write /org/cinnamon/desktop/privacy/recent-files-max-age 0
-
-# Disable saving recent files
-dconf write /org/cinnamon/desktop/privacy/recent-files-enabled false
-
-# Disable automatic connections to new networks
-nmcli networking off
-
-# Disable Wi-Fi if not needed
-nmcli radio wifi off
+# Validate the sudoers file for syntax correctness
+visudo -c
+if [ $? -eq 0 ]; then
+    echo "The sudoers file was updated and is valid."
+else
+    echo "The sudoers file is invalid. Restoring the original."
+    mv /etc/sudoers.bak /etc/sudoers
+    exit 1
+fi
