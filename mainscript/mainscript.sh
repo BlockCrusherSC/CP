@@ -439,7 +439,7 @@ mawk -F: '$3 < 1000 || $3 > 65533 {print $1, $3}' /etc/passwd >> $MANUAL_FILE
 
 #Check listening processes
 manualtask "Check listening processes:"
-ss -tulnp >> $MANUAL_FILE
+ss -plntu >> $MANUAL_FILE
 
 #Check startup
 manualtask "Run sudo nano /etc/crontab and crontab -l to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
