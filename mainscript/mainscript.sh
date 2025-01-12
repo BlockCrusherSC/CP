@@ -198,7 +198,6 @@ appremoval hydra
 appremoval hydra-gtk
 appremoval aircrack-ng
 appremoval fcrackzip
-appremoval lcrack
 appremoval ophcrack
 appremoval ophcrack-cli
 appremoval pdfcrack
@@ -207,16 +206,14 @@ appremoval sipcrack
 appremoval irpas
 appremoval zeitgeist-core
 appremoval zeitgeist-datahub
-appremoval python-zeitgeist
 appremoval rhythmbox-plugin-zeitgeist
 appremoval zeitgeist
 appremoval netcat
 appremoval netcat-openbsd
-appremoval natcat-traditional
+appremoval netcat-traditional
 appremoval ncat
 appremoval pnetcat
 appremoval socat
-appremoval sock
 appremoval socket
 appremoval sbd
 printlog "Common hacking tools removed."
