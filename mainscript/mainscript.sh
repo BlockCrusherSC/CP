@@ -171,6 +171,10 @@ printlog "UID & GID for root set to 0." #Ownership of files has been fixed."
 passwd -l root >> $LOG_FILE
 printlog "Root account locked."
 
+#su group created and restricted
+groupadd sugroup
+echo "auth required pam_wheel.so use_uid group=sugroup" >> /etc/pam.d/su
+printlog "su group created and restricted in /etc/pam.d/su"
 #Unalias accounts
 unalias -a
 printlog "All alias have been removed."
