@@ -94,9 +94,12 @@ echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAut
 #Enable Firewall
 printlog "Enabling firewall..."
 apt-get install ufw -y -qq >> $LOG_FILE
+apt-get purge iptables-persistant -y -qq >> $LOG_FILE
+printlog "iptables-persistant removed."
 ufw enable >> $LOG_FILE
 ufw default deny incoming >> $LOG_FILE
 ufw default allow outgoing >> $LOG_FILE
+ufw default deny routed >> $LOG_FILE
 ufw deny 1337 >> $LOG_FILE
 ufw allow in on lo
 ufw allow out on lo
