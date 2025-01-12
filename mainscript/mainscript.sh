@@ -496,6 +496,10 @@ ss -plntu >> $MANUAL_FILE
 #Check startup
 manualtask "Run sudo nano /etc/crontab and crontab -l to check startup (NETCAT BACKDOOR HERE!!!)\ncheck cron weekly, daily, hourly too"
 
+#Privilege Escelation
+manualtask "sudo visudo /etc/sudoers, check if default is set to use_pty"
+manualtask "sudo visudo /etc/sidpers, add Defaults logfile='/var/log/sudo.log'"
+
 #Files with perms of 700-777
 manualtask "Check files with a permission of 700-777:"
 ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
@@ -503,8 +507,7 @@ ls -l | grep "^-rw[x-]*" >> $MANUAL_FILE
 #Other
 manualtask "Configure users (unathorized, auto-login, insecure password, privileges)"
 manualtask "Configure groups"
-manualtask "Configure browser"
-manualtask "Configure settings & Software & Updates"
+manualtask "Configure GUI stuff"
 
 #clamscan
 echo "Do you want to clamscan?"
