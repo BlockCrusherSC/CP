@@ -113,16 +113,35 @@ chmod 600 /etc/sysctl.conf
 printlog "sysctl.conf permissions configured."
 printlog "sysctl.conf configured."
 
-#Allow only root in cron
+#Cron perms
+chown root:root /etc/crontab
+chmod og-rwx /etc/crontab
+chown root:root /etc/crontab
+chown root:root /etc/cron.hourly/
+chmod og-rwx /etc/cron.hourly/
+chown root:root /etc/cron.daily/
+chmod og-rwx /etc/cron.daily/
+chown root:root /etc/cron.weekly/
+chmod og-rwx /etc/cron.weekly/
+chown root:root /etc/cron.monthly/
+chmod og-rwx /etc/cron.monthly/
+chown root:root /etc/cron.d/
+chmod og-rwx /etc/cron.d/
+printlog "cron file permissions updated."
+
 touch /etc/cron.allow
 touch /etc/cron.deny
+chown root:root /etc/cron.allow
+chmod og-rwx /etc/cron.allow
+chown root:root /etc/cron.deny
+chmod og-rwx /etc/cron.deny
 chmod 600 /etc/cron.allow >> $LOG_FILE
 chmod 600 /etc/cron.deny >> $LOG_FILE
 chmod 700 /var/spool/cron/crontabs >> $LOG_FILE
-printlog "Cron directories limited & created if they didn't exist."
+printlog "Cron.deny & cron.allow created and limited if they didn't exist."
 
 #Remove startup tasks from crontab
-crontab -l > /importfiles/cronjobs.txt
+crontab -l > $BACKUPDIR/cronjobs.txt
 printlog "crontab jobs backed up."
 crontab -r >> $LOG_FILE
 printlog "Root crontab scheduled jobs removed with crontab -r."
@@ -156,27 +175,27 @@ function appremoval () {
 }
 
 appremoval autofs
-systemctl stop avahi-daemon.socket >> $LOG_FILE
+systemctl stop avahi-daemon.socket >> $LOG_FILE 2>>$LOG_FILE
 appremoval avahi-daemon
-systemctl stop isc-dhcp-server6.service >> $LOG_FILE
+systemctl stop isc-dhcp-server6.service >> $LOG_FILE 2>>$LOG_FILE
 appremoval isc-dhcp-server
 appremoval bind9
 appremoval dnsmasq
 appremoval vsftpd
 appremoval slapd
-systemctl stop dovecot.socket dovecot.service >> $LOG_FILE
-apt-get purge dovecot-imapd dovecot-pop3d >> $LOG_FILE
+systemctl stop dovecot.socket dovecot.service >> $LOG_FILE 2>>$LOG_FILE
+apt-get purge dovecot-imapd dovecot-pop3d -y -qq >> $LOG_FILE 2>>$LOG_FILE
 printlog "message access server services removed."
-systemctl stop nfs-server.service >> $LOG_FILE
-apt-get purge nfs-kernel-server >> $LOG_FILE
+systemctl stop nfs-server.service >> $LOG_FILE 2>>$LOG_FILE
+apt-get purge nfs-kernel-server -y -qq >> $LOG_FILE 2>>$LOG_FILE
 printlog "network file system service removed."
 appremoval ypserv
-systemctl stop cups.socket >> $LOG_FILE
+systemctl stop cups.socket >> $LOG_FILE 2>>$LOG_FILE
 appremoval cups
-systemctl stop rpcbind.socket >> $LOG_FILE
+systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
 appremoval rpcbind
 appremoval rsync
-systemctl stop smbd.service >> $LOG_FILE
+systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
 appremoval samba
 appremoval snmpd
 appremoval tftpd-hpa
@@ -212,7 +231,6 @@ appremoval netcat
 appremoval netcat-openbsd
 appremoval netcat-traditional
 appremoval ncat
-appremoval pnetcat
 appremoval socat
 appremoval socket
 appremoval sbd
@@ -263,6 +281,11 @@ then
 else
         echo "rc-local.service is not active."
 fi
+
+#Bluetooth
+systemctl stop bluetooth.service >> $LOG_FILE 2>> $LOG_FILE
+apt-get purge bluez -y -qq  >> $LOG_FILE 2>> $LOG_FILE
+printlog "bluetooth disabled and removed."
 
 #Optional Applictions
     #SSH
@@ -378,7 +401,7 @@ then
 	
 elif [[ $apache == "no" || $apache == "n" ]];
 then
-	systemctl stop apache2.socket apache2.service
+	systemctl stop apache2.socket apache2.service >> $LOG_FILE 2>>$LOG_FILE
   	apt-get purge apache2 -y -qq >> $LOG_FILE
      	printlog "apache2 removed."
 else
@@ -398,7 +421,7 @@ then
  	echo "... (add more stuff)"
 elif [[ $nginx == "no" || $nginx == "n" ]];
 then
-	systemctl nginx.service
+	systemctl stop nginx.service >> $LOG_FILE 2>>$LOG_FILE
 	apt-get purge nginx nginx-full nginx-extras -y -qq >> $LOG_FILE
  	printlog "nginx removed."
 else
@@ -446,7 +469,7 @@ printlog "Apps with hack or crack have been scanned for."
 apt-get install debsums -y -qq >> $LOG_FILE
 printlog "Debsums installed."
 manualtask "Running debsums scan..."
-debsums -s -a >> $LOG_FILE 2>> $LOG_FILE
+debsums -s -a >> $MANUAL_FILE 2>> $MANUAL_FILE
 printlog "Debsums scan complete. Review results in manual log."
 
 #Strange admins
