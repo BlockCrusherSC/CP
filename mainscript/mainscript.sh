@@ -150,9 +150,40 @@ printlog "All alias have been removed."
 
 #Remove Malicious Processes
 function appremoval () {
+    systemctl stop "$1".service >> $LOG_FILE
     sudo apt-get purge --auto-remove -y -qq "$1" >> $LOG_FILE
     printlog "$1 removed."
 }
+
+appremoval autofs
+systemctl stop avahi-daemon.socket >> $LOG_FILE
+appremoval avahi-daemon
+systemctl stop isc-dhcp-server6.service >> $LOG_FILE
+appremoval isc-dhcp-server
+appremoval bind9
+appremoval dnsmasq
+appremoval vsftpd
+appremoval slapd
+systemctl stop dovecot.socket dovecot.service >> $LOG_FILE
+apt-get purge dovecot-imapd dovecot-pop3d >> $LOG_FILE
+printlog "message access server services removed."
+systemctl stop nfs-server.service >> $LOG_FILE
+apt-get purge nfs-kernel-server >> $LOG_FILE
+printlog "network file system service removed."
+appremoval ypserv
+systemctl stop cups.socket >> $LOG_FILE
+appremoval cups
+systemctl stop rpcbind.socket >> $LOG_FILE
+appremoval rpcbind
+appremoval rsync
+systemctl stop smbd.service >> $LOG_FILE
+appremoval samba
+appremoval snmpd
+appremoval tftpd-hpa
+appremoval squid
+appremoval xinetd
+printlog "Unnecessary (RISKY) servers removed."
+
 appremoval lighttpd
 appremoval nikto
 appremoval nmap
@@ -188,6 +219,7 @@ appremoval socat
 appremoval sock
 appremoval socket
 appremoval sbd
+printlog "Common hacking tools removed."
 #nis
 appremoval nis
 #FTP
@@ -207,15 +239,11 @@ appremoval ldap-utils
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
 printlog "Common games removed."
 
-manualtask "Applications with hack or crack in the name (remove these):"
-dpkg -l | grep -E 'hack|crack' >> $MANUAL_FILE
-printlog "Common hacking tools removed, and apps with hack or crack have been scanned for."
-
 #Install AppArmor
 apt-get install apparmor apparmor-utils apparmor-profiles -y -qq >> $LOG_FILE
-systemctl start apparmor >> $LOG_FILE 2>&1
-systemctl enable apparmor >> $LOG_FILE 2>&1
-aa-enforce /etc/apparmor.d/* >> $LOG_FILE 2>&1
+systemctl start apparmor >> $LOG_FILE
+systemctl enable apparmor >> $LOG_FILE
+aa-enforce /etc/apparmor.d/* >> $LOG_FILE
 printlog "AppArmor installed, started, and enabled by default. All profiles set to enforce."
 
 #Disable Ctrl+Alt+Delete Reboot
@@ -262,22 +290,6 @@ then
 	printlog "SSH removed and SSH port closed."
 else
 	printlog "Invalid response given. SSH has not been configured."
-fi
-
-    #Samba
-echo "Does this computer need Samba?"
-read sambastatus
-if [[ $sambastatus == "yes" || $sambastatus == "y" ]];
-then
-	echo "..."
-elif [[ $sambastatus == "no" || $sambastatus == "n" ]];
-then
-	printlog "Removing Samba..."
-	apt-get purge samba samba-common samba-libs samba-common-bin -y -qq >> $LOG_FILE
-	printlog "Samba removed."
-
-else
-	printlog "Invalid response given. Samba has not been configured."
 fi
 
     #Mail
@@ -369,7 +381,8 @@ then
 	
 elif [[ $apache == "no" || $apache == "n" ]];
 then
-  	apt-get purge apache2 apache2-utils apache2-bin apache2.2-common -y -qq >> $LOG_FILE
+	systemctl stop apache2.socket apache2.service
+  	apt-get purge apache2 -y -qq >> $LOG_FILE
      	printlog "apache2 removed."
 else
 	printlog "Invalid response given. Apache2 has not been configured."
@@ -388,6 +401,7 @@ then
  	echo "... (add more stuff)"
 elif [[ $nginx == "no" || $nginx == "n" ]];
 then
+	systemctl nginx.service
 	apt-get purge nginx nginx-full nginx-extras -y -qq >> $LOG_FILE
  	printlog "nginx removed."
 else
@@ -425,7 +439,12 @@ printlog "sshd restarted."
 
 #Enable lockout policy
 manualtask "ENABLE LOCKOUT POLICY (sudo pam-auth-update, and select 'Notify on failed login attempts' and 'Enforce failed login attempt counter'."
-manualtask "AUTOREMOVE apt-get autoremove"
+
+#Hack/crack applications
+manualtask "Applications with hack or crack in the name (remove these):"
+dpkg -l | grep -E 'hack|crack' >> $MANUAL_FILE
+printlog "Apps with hack or crack have been scanned for."
+
 #Debsums scan
 apt-get install debsums -y -qq >> $LOG_FILE
 printlog "Debsums installed."
