@@ -159,7 +159,6 @@ appremoval nmap
 appremoval tcpdump
 appremoval wireshark
 appremoval zenmap
-appremoval logkeys
 appremoval snmpd
 appremoval inetutils-inetd
 appremoval john
@@ -172,7 +171,6 @@ appremoval lcrack
 appremoval ophcrack
 appremoval ophcrack-cli
 appremoval pdfcrack
-appremoval pyrit
 appremoval rarcrack
 appremoval sipcrack
 appremoval irpas
@@ -181,7 +179,6 @@ appremoval zeitgeist-datahub
 appremoval python-zeitgeist
 appremoval rhythmbox-plugin-zeitgeist
 appremoval zeitgeist
-appremoval burpsuite
 appremoval netcat
 appremoval netcat-openbsd
 appremoval natcat-traditional
@@ -191,6 +188,22 @@ appremoval socat
 appremoval sock
 appremoval socket
 appremoval sbd
+#nis
+appremoval nis
+#FTP
+appremoval ftp
+#Telnet
+appremoval telnet
+ufw deny 23 >> $LOG_FILE
+printlog "port 23 closed."
+#rsh-client
+appremoval rsh-client
+#talk
+appremoval talk
+#ldap
+appremoval ldap-utils
+
+#Games
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
 printlog "Common games removed."
 
@@ -266,15 +279,6 @@ then
 else
 	printlog "Invalid response given. Samba has not been configured."
 fi
-
-    #FTP
-apt-get purge -y -qq ftp vsftpd proftpd >> $LOG_FILE
-printlog "FTP (vsftpd and proftpd) have been removed."
-
-    #Telnet
-apt-get purge telnet telnetd -y -qq >> $LOG_FILE
-ufw deny 23 >> $LOG_FILE
-printlog "Telnet removed and port 23 closed."
 
     #Mail
 echo "Does this computer need Mail?"
