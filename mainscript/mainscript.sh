@@ -283,7 +283,7 @@ printlog "AppArmor installed, started, and enabled by default. All profiles set 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #prelink removal (messes with AIDE)
-prelink -ua >> $LOG_FILE
+prelink -ua >> $LOG_FILE 2>> $LOG_FILE
 appremoval prelink
 
 #Disable Ctrl+Alt+Delete Reboot
