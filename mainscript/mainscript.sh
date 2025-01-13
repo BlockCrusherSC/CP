@@ -90,6 +90,26 @@ echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nA
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
 echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
 
+	#faillock.conf
+cp /etc/security/faillock.conf $BACKUPDIR/faillock.conf
+chmod 777 $BACKUPDIR/faillock.conf
+printlog "faillock.conf backed up."
+cp importfiles/faillock.conf /etc/security/faillock.conf
+chown root:root /etc/security/faillock.conf
+chmod og-rwx /etc/security/faillock.conf
+printlog "sysctl.conf permissions configured."
+printlog "sysctl.conf configured."
+
+	#pwquality.conf
+cp /etc/security/pwquality.conf $BACKUPDIR/pwquality.conf
+chmod 777 $BACKUPDIR/pwquality.conf
+printlog "pwquality.conf backed up."
+cp importfiles/pwquality.conf /etc/security/pwquality.conf
+chown root:root /etc/security/pwquality.conf
+chmod og-rwx /etc/security/pwquality.conf
+printlog "pwquality.conf permissions configured."
+printlog "pwquality.conf configured."
+
 #pam-auth-update (common_password)
 pam-auth-update --enable unix >> $LOG_FILE
 pam-auth-update --enable faillock >> $LOG_FILE
