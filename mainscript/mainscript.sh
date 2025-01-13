@@ -160,12 +160,6 @@ printlog "crontab jobs backed up."
 crontab -r >> $LOG_FILE
 printlog "Root crontab scheduled jobs removed with crontab -r."
 
-#GNOME configuration
-manualtask "In Settings > Sharing, turn off any screen sharing or remote login options"
-manualtask "Go to Settings > Privacy > Screen Lock and ensure it’s enabled"
-echo "..."
-printlog "GNOME configured."
-
 #Set UID & GID 0 to root
 usermod -u 0 root
 usermod -g 0 root
