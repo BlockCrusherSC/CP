@@ -268,6 +268,8 @@ appremoval rsh-client
 appremoval talk
 #ldap
 appremoval ldap-utils
+#apport (collects sensitive data)
+appremoval apport
 
 #Games
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
@@ -279,6 +281,13 @@ systemctl start apparmor >> $LOG_FILE
 systemctl enable apparmor >> $LOG_FILE
 aa-enforce /etc/apparmor.d/* >> $LOG_FILE
 printlog "AppArmor installed, started, and enabled by default. All profiles set to enforce."
+
+#disable core dumps
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#prelink removal (messes with AIDE)
+prelink -ua >> $LOG_FILE
+appremoval prelink
 
 #Disable Ctrl+Alt+Delete Reboot
 echo "exec true" >> /etc/init/control-alt-delete.override
