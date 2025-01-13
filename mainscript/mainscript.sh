@@ -83,7 +83,7 @@ printlog "common-auth backed up."
 sed -i 's/*pam.unix.so nullok*/pam.unix.so/' /etc/pam.d/common-auth
 printlog "Password policies configured."
 
-#Account lockout policy
+    #Account lockout policy
 touch /usr/share/pam-configs/faillock >> $LOG_FILE
 echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n	[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
@@ -95,6 +95,7 @@ echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAut
 #pam-auth-update --enable faillock_notify
 #pam-auth-update --enable pwquality
 #pam-auth-update --enable pwhistory
+#printlog "PAM modules updated."
 
 #Enable Firewall
 printlog "Enabling firewall..."
@@ -183,6 +184,10 @@ printlog "group sugroup created and restricted in /etc/pam.d/su"
 #Unalias accounts
 unalias -a
 printlog "All alias have been removed."
+
+#/etc/shells config
+sed -i '/nologin/c\\' /etc/shells
+printlog "instances of noglogin removed from /etc/shells."
 
 #Remove Malicious Processes
 function appremoval () {
