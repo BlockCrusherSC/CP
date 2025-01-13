@@ -478,9 +478,6 @@ apt-get clean -y -qq >> $LOG_FILE
 apt-get autoremove -y -qq >> $LOG_FILE
 printlog "Unecessary packages removed."
 
-systemctl restart sshd
-printlog "sshd restarted."
-
 #---------- MANUAL TASKS -----------#
 
 #Enable lockout policy
