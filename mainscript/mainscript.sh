@@ -54,6 +54,7 @@ printlog "/etc/passwd and /etc/group has been backed up in the backups folder."
 #Password Policies
 	
  	#libpam modules
+apt-get purge libpam-cracklib -y -qq >>$LOG_FILE
 apt-get install libpam-runtime -y -qq >> $LOG_FILE
 apt-get install libpam-modules -y -qq >> $LOG_FILE
 apt-get install libpam-pwquality -y -qq >> $LOG_FILE
