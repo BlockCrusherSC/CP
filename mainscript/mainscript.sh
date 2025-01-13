@@ -88,8 +88,6 @@ touch /usr/share/pam-configs/faillock >> $LOG_FILE
 echo -e "Name: Enforce failed login attempt counter\nDefault: no\nPriority: 0\nAuth-Type: Primary\nAuth:\n	[default=die] pam_faillock.so authfail\n	sufficient pam_faillock.so authsucc" | sudo tee -a /usr/share/pam-configs/faillock
 touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
 echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
-pam-auth-update --enable faillock
-pam-auth-update --enable faillock_notify
 
 #pam-auth-update (common_password)
 #pam-auth-update --enable unix
