@@ -20,3 +20,7 @@
 #h+.*)?$' /etc/pam.d/su
 
 grep -PH -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b' /usr/share/pam-configs/*
+echo ""
+find /usr/share/pam-configs/ -type f -exec sed -i '/^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b/s/nullok//g' {} +
+echo ""
+grep -PH -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b' /usr/share/pam-configs/*
