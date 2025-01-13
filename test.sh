@@ -19,13 +19,6 @@
 #(use_uid\b|group=\H+\b))\h+(?:[^#\n\r]+\h+)?((?!\1)(use_uid\b|group=\H+\b))(\
 #h+.*)?$' /etc/pam.d/su
 
-{
-while IFS= read -r l_user; do
-l_change=$(date -d "$(chage --list $l_user | grep '^Last password
-change' | cut -d: -f2 | grep -v 'never$')" +%s)
-if [[ "$l_change" -gt "$(date +%s)" ]]; then
-echo "User: \"$l_user\" last password change was \"$(chage --list
-$l_user | grep '^Last password change' | cut -d: -f2)\""
-fi
-done < <(awk -F: '$2~/^\$.+\$/{print $1}' /etc/shadow)
-}
+sed -i  '/try_first_pass yescrypt/ { /remember=5/! s/$/ remember=5 / }' /etc/pam.d/common-password
+sed -i  '/try_first_pass yescrypt/ { /minlen=10/! s/$/ minlen=10 / }' /etc/pam.d/common-password
+sed -i  '/pam_pwquality.so/ { /ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/! s/$/ ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1 / }' /etc/pam.d/common-password
