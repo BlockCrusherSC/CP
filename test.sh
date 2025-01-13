@@ -21,6 +21,6 @@
 
 grep -PH -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b' /usr/share/pam-configs/*
 echo ""
-find /usr/share/pam-configs/ -type f -exec sed -i '/^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b/s/nullok//g' {} +
+find /usr/share/pam-configs/ -type f -exec sed -i '/nullok/g' {} +
 echo ""
 grep -PH -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b' /usr/share/pam-configs/*
