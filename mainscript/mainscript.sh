@@ -92,11 +92,11 @@ pam-auth-update --enable faillock
 pam-auth-update --enable faillock_notify
 
 #pam-auth-update (common_password)
-pam-auth-update --enable unix
-pam-auth-update --enable faillock
-pam-auth-update --enable faillock_notify
-pam-auth-update --enable pwquality
-pam-auth-update --enable pwhistory
+#pam-auth-update --enable unix
+#pam-auth-update --enable faillock
+#pam-auth-update --enable faillock_notify
+#pam-auth-update --enable pwquality
+#pam-auth-update --enable pwhistory
 
 #Enable Firewall
 printlog "Enabling firewall..."
