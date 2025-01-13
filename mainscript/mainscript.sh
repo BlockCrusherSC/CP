@@ -81,7 +81,8 @@ sed -i 's/^PASS_WARN_AGE.*/PASS_WARN_AGE   7/' /etc/login.defs
 cp /etc/pam.d/common-auth $BACKUPDIR/common-auth
 chmod 777 $BACKUPDIR/common-auth
 printlog "common-auth backed up."
-sed -i 's/*pam.unix.so nullok*/pam.unix.so/' /etc/pam.d/common-auth
+sudo sed -i 's/nullok//g' /etc/pam.d/common-auth
+printlog "Null passwords disabled."
 
     #Account lockout policy
 touch /usr/share/pam-configs/faillock >> $LOG_FILE
