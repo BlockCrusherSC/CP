@@ -91,6 +91,13 @@ echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAut
 pam-auth-update --enable faillock
 pam-auth-update --enable faillock_notify
 
+#pam-auth-update (common_password)
+pam-auth-update --enable unix
+pam-auth-update --enable faillock
+pam-auth-update --enable faillock_notify
+pam-auth-update --enable pwquality
+pam-auth-update --enable pwhistory
+
 #Enable Firewall
 printlog "Enabling firewall..."
 apt-get install ufw -y -qq >> $LOG_FILE
