@@ -82,7 +82,6 @@ cp /etc/pam.d/common-auth $BACKUPDIR/common-auth
 chmod 777 $BACKUPDIR/common-auth
 printlog "common-auth backed up."
 sed -i 's/*pam.unix.so nullok*/pam.unix.so/' /etc/pam.d/common-auth
-printlog "Password policies configured."
 
     #Account lockout policy
 touch /usr/share/pam-configs/faillock >> $LOG_FILE
@@ -91,18 +90,18 @@ touch /usr/share/pam-configs/faillock_notify >> $LOG_FILE
 echo -e "Name: Notify on failed login attempts\nDefault: no\nPriority: 1024\nAuth-Type: Primary\nAuth:\n	requisite pam_faillock.so preauth\n" | sudo tee -a /usr/share/pam-configs/faillock-notify
 
 #pam-auth-update (common_password)
-#pam-auth-update --enable unix
-#pam-auth-update --enable faillock
-#pam-auth-update --enable faillock_notify
-#pam-auth-update --enable pwquality
-#pam-auth-update --enable pwhistory
-#printlog "PAM modules updated."
+pam-auth-update --enable unix
+pam-auth-update --enable faillock
+pam-auth-update --enable faillock_notify
+pam-auth-update --enable pwquality
+pam-auth-update --enable pwhistory
+printlog "PAM modules updated."
 
 #Enable Firewall
 printlog "Enabling firewall..."
 apt-get install ufw -y -qq >> $LOG_FILE
-apt-get purge iptables-persistant -y -qq >> $LOG_FILE
-printlog "iptables-persistant removed."
+apt-get purge iptables-persistent -y -qq >> $LOG_FILE
+printlog "iptables-persistent removed."
 ufw enable >> $LOG_FILE
 ufw default deny incoming >> $LOG_FILE
 ufw default allow outgoing >> $LOG_FILE
