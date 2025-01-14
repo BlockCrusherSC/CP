@@ -67,7 +67,7 @@ chmod 777 $BACKUPDIR/common-password
 printlog "common-password backed up."
 sed -i  '/try_first_pass yescrypt/ { /use_authtok/! s/$/ use_authtok / }' /etc/pam.d/common-password
 sed -i  '/try_first_pass yescrypt/ { /remember=24/! s/$/ remember=24 / }' /etc/pam.d/common-password
-sed -i  '/try_first_pass yescrypt/ { /minlen=10/! s/$/ minlen=10 / }' /etc/pam.d/common-password
+sed -i  '/try_first_pass yescrypt/ { /minlen=14/! s/$/ minlen=14 / }' /etc/pam.d/common-password
 sed -i  '/try_first_pass yescrypt/ { /enforce_for_root/! s/$/ enforce_for_root / }' /etc/pam.d/common-password
 sed -i  '/pam_pwquality.so/ { /ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1/! s/$/ ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1 / }' /etc/pam.d/common-password
 
@@ -84,6 +84,9 @@ cp /etc/pam.d/common-auth $BACKUPDIR/common-auth
 chmod 777 $BACKUPDIR/common-auth
 printlog "common-auth backed up."
 sudo sed -i 's/nullok//g' /etc/pam.d/common-auth
+find /usr/share/pam-configs -type f -exec sed -i 's/nullok//g' {} +
+printlog "files with nullok (should be blank):"
+grep -PH -- '^\h*([^#\n\r]+\h+)?pam_unix\.so\h+([^#\n\r]+\h+)?nullok\b' /usr/share/pam-configs/* | sudo tee -a $LOG_FILE
 printlog "Null passwords disabled."
 
     #Account lockout policy
@@ -536,7 +539,7 @@ manualtask "Run sudo nano /etc/crontab and crontab -l to check startup (NETCAT B
 #Privilege Escalation
 manualtask "sudo visudo /etc/sudoers, add/fix to 'Defaults use_pty'"
 manualtask "sudo visudo /etc/sudoers, add/fix to Defaults 'env_reset, timestamp_timeout=15'"
-manualtask "sudo visudo /etc/sudoers, add 'Defaults logfile=''/var/log/sudo.log''' (DOUBLE QUOTES) "
+manualtask "sudo visudo /etc/sudoers, add 'Defaults logfile =''/var/log/sudo.log''' (DOUBLE QUOTES) "
 manualtask "Remove all instances of NOPASSWD and !authenticate in /etc/sudoers"
 
 #Files with perms of 700-777
