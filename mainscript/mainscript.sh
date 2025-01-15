@@ -340,6 +340,17 @@ else
 fi
 
 #Auditing
+	#journald
+systemctl unmask systemd-journald.service >> $LOG_FILE
+systemctl start systemd-journald.service >> $LOG_FILE
+printlog "journald service started."
+
+	#auditd
+apt-get install auditd audispd-plugins -y -qq >> $LOG_FILE
+systemctl unmask auditd >> $LOG_FILE
+systemctl enable auditd >> $LOG_FILE
+systemctl start auditd >> $LOG_FILE
+printlog "auditd installed, enabled, and started."
 
 
 #Optional Applictions
