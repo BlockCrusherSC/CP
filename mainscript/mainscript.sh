@@ -107,8 +107,8 @@ printlog "faillock.conf backed up."
 cp importfiles/faillock.conf /etc/security/faillock.conf
 chown root:root /etc/security/faillock.conf
 chmod og-rwx /etc/security/faillock.conf
-printlog "sysctl.conf permissions configured."
-printlog "sysctl.conf configured."
+printlog "faillock.conf permissions configured."
+printlog "faillock.conf configured."
 
 	#pwquality.conf
 cp /etc/security/pwquality.conf $BACKUPDIR/pwquality.conf
@@ -356,7 +356,14 @@ systemctl unmask auditd >> $LOG_FILE
 systemctl enable auditd >> $LOG_FILE
 systemctl start auditd >> $LOG_FILE
 printlog "auditd installed, enabled, and started."
-
+cp /etc/audit/auditd.conf $BACKUPDIR/auditd.conf
+chmod 777 $BACKUPDIR/aduitd.conf
+printlog "auditd.conf backed up."
+cp importfiles/auditd.conf /etc/audit/auditd.conf
+chown root:root /etc/audit/auditd.conf
+chmod og-rwx /etc/audit/auditd.conf
+printlog "auditd.conf permissions configured."
+printlog "auditd.conf configured."
 
 #Optional Applictions
     #SSH
