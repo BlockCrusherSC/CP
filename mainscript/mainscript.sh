@@ -232,17 +232,17 @@ systemctl stop nfs-server.service >> $LOG_FILE 2>>$LOG_FILE
 apt-get purge nfs-kernel-server -y -qq >> $LOG_FILE 2>>$LOG_FILE
 printlog "network file system service removed."
 appremoval ypserv
-systemctl stop cups.socket >> $LOG_FILE 2>>$LOG_FILE
-appremoval cups
-systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
-appremoval rpcbind
-appremoval rsync
-systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
-appremoval samba
-appremoval snmpd
-appremoval tftpd-hpa
-appremoval squid
-appremoval xinetd
+#systemctl stop cups.socket >> $LOG_FILE 2>>$LOG_FILE
+#appremoval cups
+#systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
+#appremoval rpcbind
+#appremoval rsync
+#systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
+##appremoval samba
+#ppremoval snmpd
+#appremoval tftpd-hpa
+#appremoval squid
+#appremoval xinetd
 printlog "Unnecessary (RISKY) servers removed."
 
 appremoval lighttpd
@@ -276,6 +276,7 @@ appremoval ncat
 appremoval socat
 appremoval socket
 appremoval sbd
+appremoval sucrack
 printlog "Common hacking tools removed."
 #nis
 appremoval nis
