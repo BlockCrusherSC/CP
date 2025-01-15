@@ -209,6 +209,10 @@ printlog "All alias have been removed."
 sed -i '/nologin/c\\' /etc/shells
 printlog "instances of noglogin removed from /etc/shells."
 
+#Disable Ctrl+Alt+Delete Reboot
+echo "exec true" >> /etc/init/control-alt-delete.override
+printlog "Ctrl+Alt+Delete reboot disabled."
+
 #Remove Malicious Processes
 function appremoval () {
     systemctl stop "$1".service >> $LOG_FILE 2>>$LOG_FILE
@@ -299,6 +303,11 @@ appremoval apport
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
 printlog "Common games removed."
 
+#Bluetooth
+systemctl stop bluetooth.service >> $LOG_FILE 2>> $LOG_FILE
+apt-get purge bluez -y -qq  >> $LOG_FILE 2>> $LOG_FILE
+printlog "bluetooth disabled and removed."
+
 #Install AppArmor
 apt-get install apparmor apparmor-utils apparmor-profiles -y -qq >> $LOG_FILE
 systemctl start apparmor >> $LOG_FILE
@@ -312,10 +321,6 @@ printlog "AppArmor installed, started, and enabled by default. All profiles set 
 #prelink removal (messes with AIDE)
 prelink -ua >> $LOG_FILE 2>> $LOG_FILE
 appremoval prelink
-
-#Disable Ctrl+Alt+Delete Reboot
-echo "exec true" >> /etc/init/control-alt-delete.override
-printlog "Ctrl+Alt+Delete reboot disabled."
 
 #rc.local
 if systemctl is-active -q rc-local.service;
@@ -334,10 +339,8 @@ else
         echo "rc-local.service is not active."
 fi
 
-#Bluetooth
-systemctl stop bluetooth.service >> $LOG_FILE 2>> $LOG_FILE
-apt-get purge bluez -y -qq  >> $LOG_FILE 2>> $LOG_FILE
-printlog "bluetooth disabled and removed."
+#Auditing
+
 
 #Optional Applictions
     #SSH
