@@ -51,6 +51,11 @@ cp /etc/passwd $BACKUPDIR/passwd
 chmod 777 $BACKUPDIR/passwd
 printlog "/etc/passwd and /etc/group has been backed up in the backups folder."
 
+#GDM GUI
+apt-get purge gdm3 -y -qq >> $LOG_FLE
+apt-get autoremove gm3 >>$LOG_FILE
+printlog "gdm3 removed if it existed."
+
 #Password Policies
 	
  	#libpam modules
