@@ -365,6 +365,11 @@ chmod og-rwx /etc/audit/auditd.conf
 printlog "auditd.conf permissions configured."
 printlog "auditd.conf configured."
 
+	#rsyslog
+systemctl enable rsyslog.service
+systemctl start rsyslog.service
+printlog "rsyslog.service enabled and started."
+
 #Optional Applictions
     #SSH
 echo "Does this computer need SSH?"
@@ -569,6 +574,7 @@ manualtask "sudo visudo /etc/sudoers, add/fix to Defaults 'env_reset, timestamp_
 manualtask "sudo visudo /etc/sudoers, add 'Defaults logfile =''/var/log/sudo.log''' (DOUBLE QUOTES) "
 manualtask "Remove all instances of NOPASSWD and !authenticate in /etc/sudoers"
 manualtask "Make sure hashing algorithm set in pam.unix.so is sha512 or yescrypt in pam.d (pg 647 for specific file script)"
+manualtask "systemctl list-unit-files --type=service     to see all running services (and if they are enabled)"
 
 #Files with perms of 700-777
 manualtask "Check files with a permission of 700-777:"
