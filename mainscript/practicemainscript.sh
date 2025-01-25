@@ -232,7 +232,7 @@ systemctl stop isc-dhcp-server6.service >> $LOG_FILE 2>>$LOG_FILE
 appremoval isc-dhcp-server
 appremoval bind9
 appremoval dnsmasq
-appremoval vsftpd
+#appremoval vsftpd
 appremoval slapd
 systemctl stop dovecot.socket dovecot.service >> $LOG_FILE 2>>$LOG_FILE
 apt-get purge dovecot-imapd dovecot-pop3d -y -qq >> $LOG_FILE 2>>$LOG_FILE
@@ -246,10 +246,10 @@ appremoval cups
 systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
 appremoval rpcbind
 appremoval rsync
-systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
-appremoval samba
-appremoval snmpd
-appremoval tftpd-hpa
+#systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
+#appremoval samba
+#appremoval snmpd
+#appremoval tftpd-hpa
 appremoval squid
 appremoval xinetd
 printlog "Unnecessary (RISKY) servers removed."
@@ -290,7 +290,7 @@ printlog "Common hacking tools removed."
 #nis
 appremoval nis
 #FTP
-appremoval ftp
+#appremoval ftp
 #Telnet
 appremoval telnet
 ufw deny 23 >> $LOG_FILE
@@ -487,10 +487,10 @@ else
 	printlog "Invalid response given. Apache2 has not been configured."
 fi
 
-echo "Does this computer need nginx?"
-read nginx
-if [[ $nginx == "yes" || $nginx == "y" ]];
-then
+#echo "Does this computer need nginx?"
+#read nginx
+#if [[ $nginx == "yes" || $nginx == "y" ]];
+#then
 	cp /etc/nginx/nginx.conf $BACKUPDIR/nginx.conf
 	chmod 777 $BACKUPDIR/nginx.conf
 	printlog "nginx.conf backed up."
@@ -498,14 +498,14 @@ then
 	chmod 600 /etc/nginx/nginx.conf
 	printlog "nginx.conf permissions configured."
  	echo "... (add more stuff)"
-elif [[ $nginx == "no" || $nginx == "n" ]];
-then
+#elif [[ $nginx == "no" || $nginx == "n" ]];
+#then
 	systemctl stop nginx.service >> $LOG_FILE 2>>$LOG_FILE
 	apt-get purge nginx nginx-full nginx-extras -y -qq >> $LOG_FILE
  	printlog "nginx removed."
-else
-	printlog "Invalid response given. Nginx has not been configured."
-fi
+#else
+	#printlog "Invalid response given. Nginx has not been configured."
+#fi
 	
 echo "Can users have media files?"
 read mediastatus
