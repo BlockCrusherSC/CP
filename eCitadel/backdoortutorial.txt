@@ -1,1 +1,10 @@
-wd
+INSTRUCTIONS TO FIND AND REMOVE A BACKDOOR:
+1. sudo ss -tulnp
+2. sudo ps aux | grep “(PID of listening process)”
+3. sudo grep -r “(filepath given by previous command)” /
+  - you will get file location of backdoor from this
+4. sudo cat (filepath)
+  - this is to get info like login & password, malicious binary location, etc.
+5. sudo kill -9 (pid)
+  - will end the process
+6. Check systemd/init.d entries for maybe more points?
