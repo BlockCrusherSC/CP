@@ -225,35 +225,6 @@ function appremoval () {
     printlog "$1 removed."
 }
 
-#appremoval autofs
-#systemctl stop avahi-daemon.socket >> $LOG_FILE 2>>$LOG_FILE
-#appremoval avahi-daemon
-#systemctl stop isc-dhcp-server6.service >> $LOG_FILE 2>>$LOG_FILE
-#appremoval isc-dhcp-server
-#appremoval bind9
-#appremoval dnsmasq
-#appremoval vsftpd
-#appremoval slapd
-#systemctl stop dovecot.socket dovecot.service >> $LOG_FILE 2>>$LOG_FILE
-#apt-get purge dovecot-imapd dovecot-pop3d -y -qq >> $LOG_FILE 2>>$LOG_FILE
-#printlog "message access server services removed."
-#systemctl stop nfs-server.service >> $LOG_FILE 2>>$LOG_FILE
-#apt-get purge nfs-kernel-server -y -qq >> $LOG_FILE 2>>$LOG_FILE
-#printlog "network file system service removed."
-#appremoval ypserv
-#systemctl stop cups.socket >> $LOG_FILE 2>>$LOG_FILE
-#appremoval cups
-#systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
-#appremoval rpcbind
-#appremoval rsync
-#systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
-#appremoval samba
-#appremoval snmpd
-#appremoval tftpd-hpa
-#appremoval squid
-#appremoval xinetd
-printlog "CHECK MANUALLY FOR SERVERS IF EXTRA TIME!!!!!!!!!!"
-
 appremoval lighttpd
 appremoval nikto
 appremoval nmap
@@ -303,6 +274,35 @@ appremoval talk
 appremoval ldap-utils
 #apport (collects sensitive data)
 appremoval apport
+
+appremoval autofs
+systemctl stop avahi-daemon.socket >> $LOG_FILE 2>>$LOG_FILE
+appremoval avahi-daemon
+systemctl stop isc-dhcp-server6.service >> $LOG_FILE 2>>$LOG_FILE
+appremoval isc-dhcp-server
+appremoval bind9
+appremoval dnsmasq
+appremoval vsftpd
+appremoval slapd
+systemctl stop dovecot.socket dovecot.service >> $LOG_FILE 2>>$LOG_FILE
+apt-get purge dovecot-imapd dovecot-pop3d -y -qq >> $LOG_FILE 2>>$LOG_FILE
+printlog "message access server services removed."
+systemctl stop nfs-server.service >> $LOG_FILE 2>>$LOG_FILE
+apt-get purge nfs-kernel-server -y -qq >> $LOG_FILE 2>>$LOG_FILE
+printlog "network file system service removed."
+appremoval ypserv
+systemctl stop cups.socket >> $LOG_FILE 2>>$LOG_FILE
+appremoval cups
+systemctl stop rpcbind.socket >> $LOG_FILE 2>>$LOG_FILE
+appremoval rpcbind
+appremoval rsync
+systemctl stop smbd.service >> $LOG_FILE 2>>$LOG_FILE
+appremoval samba
+appremoval snmpd
+appremoval tftpd-hpa
+appremoval squid
+appremoval xinetd
+printlog "CHECK MANUALLY FOR SERVERS IF EXTRA TIME!!!!!!!!!!"
 
 #Games
 apt-get purge aisleriot gnome-mahjongg gnome-mines gnome-sudoku -y -qq >> $LOG_FILE
